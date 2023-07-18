@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 
+// Login route
 // This will authenticate the user and return jwt token
 router.post("/", async (req, res) => {
   let user = await User.findOne({ email: req.body.email });

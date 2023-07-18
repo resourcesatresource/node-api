@@ -4,7 +4,7 @@ const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
 const { Genre, validateGenre } = require("../models/genre");
 
-router.get("/", auth, async (req, res) => {
+router.get("/", async (req, res) => {
   const genres = await Genre.find();
   res.send(genres);
 });

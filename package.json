@@ -1,7 +1,7 @@
 {
   "name": "vidly",
   "version": "1.0.0",
-  "description": "",
+  "description": "api endpoints",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -16,6 +16,8 @@
     "bcrypt": "^5.1.0",
     "compression": "^1.7.4",
     "config": "^3.3.9",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
     "express": "^4.16.2",
     "helmet": "^7.0.0",
     "joi": "^13.1.0",
