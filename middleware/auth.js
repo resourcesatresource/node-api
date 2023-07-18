@@ -6,7 +6,7 @@ function auth(req, res, next) {
   if (!token) return res.status(401).send("Not authorized");
 
   try {
-    const decoded = jwt.verify(token, config.get("jwtprivatekey"));
+    const decoded = jwt.verify(token, process.env.PRIVATE_JWT_KEY);
     req.user = decoded;
     next();
   } catch (error) {

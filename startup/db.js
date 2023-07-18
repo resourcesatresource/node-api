@@ -3,7 +3,7 @@ const config = require("config");
 module.exports = function () {
   // Connecting to mongodb
   mongoose
-    .connect(config.get("databaseUrl"))
+    .connect(process.env.DB_URL)
     .then(() => {
       console.log("Connection successful");
     })

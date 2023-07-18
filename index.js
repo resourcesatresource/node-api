@@ -3,7 +3,7 @@ require("./startup/db")();
 const express = require("express");
 const app = express();
 require("./startup/routes")(app);
-require("./startup/config")();
+// require("./startup/config")();
 require("./startup/prod")(app);
 
 app.set("view-engine", "ejs");
