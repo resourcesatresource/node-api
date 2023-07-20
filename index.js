@@ -3,10 +3,10 @@ require("./startup/db")();
 const express = require("express");
 const app = express();
 const cors = require("cors");
+app.use(cors);
 require("./startup/routes")(app);
 // require("./startup/config")();
 require("./startup/prod")(app);
-app.use(cors);
 app.set("view-engine", "ejs");
 app.get("/", (req, res) => {
   res.status(200).render("index.ejs");
