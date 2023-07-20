@@ -3,7 +3,7 @@ require("./startup/db")();
 const express = require("express");
 const app = express();
 const cors = require("cors");
-app.use(cors);
+app.use(cors());
 require("./startup/routes")(app);
 // require("./startup/config")();
 require("./startup/prod")(app);
