@@ -11,10 +11,10 @@ router.post("/", async (req, res) => {
 
   const isValid = await bcrypt.compare(req.body.password, user.password);
   if (!isValid) {
-    res.send("Invalid Password or User").status(400);
+    return res.send("Invalid Password or User").status(400);
   }
   const token = user.generateAuthToken();
-  res.send({token, user.name});
+  res.send(token).status(200);
 });
 
 module.exports = router;
