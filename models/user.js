@@ -26,6 +26,15 @@ userSchema.methods.generateAuthToken = function () {
   );
 };
 
+const User = new mongoose.model("user", userSchema);
+
+const getByEmail = (email) => {
+  return User.findOne({ email });
+};
+
+const update = (email, params) => {
+  return User.findOneAndUpdate({ email }, params, { returnDocument: "after" });
+};
 // model
 
-module.exports = new mongoose.model("user", userSchema);
+module.exports = { User, getByEmail, update };

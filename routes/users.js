@@ -3,7 +3,9 @@ const auth = require("../middleware/auth");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const router = express.Router();
-const User = require("../models/user");
+const { User } = require("../models/user");
+const { postAdminRequestHandler } = require("../controller/users");
+const admin = require("../middleware/admin");
 
 router.get("/", auth, async (req, res) => {
   const person = await User.find();
@@ -39,6 +41,8 @@ router.post("/", async (req, res) => {
     .header("x-auth-token", token)
     .send(_.pick(user, ["name", "email", "password"]));
 });
+
+router.post("/admin", [auth, admin], postAdminRequestHandler);
 
 // exporting routes
 module.exports = router;
