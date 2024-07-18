@@ -4,7 +4,10 @@ const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const router = express.Router();
 const { User } = require("../models/user");
-const { postAdminRequestHandler } = require("../controller/users");
+const {
+  postAdminRequestHandler,
+  getAdminStatusHandler,
+} = require("../controller/users");
 const admin = require("../middleware/admin");
 
 router.get("/", auth, async (req, res) => {
@@ -43,6 +46,8 @@ router.post("/", async (req, res) => {
 });
 
 router.post("/admin", [auth, admin], postAdminRequestHandler);
+
+router.get("/admin/:id", getAdminStatusHandler);
 
 // exporting routes
 module.exports = router;

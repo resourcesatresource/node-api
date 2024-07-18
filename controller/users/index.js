@@ -39,4 +39,27 @@ const postAdminRequestHandler = async (req, res) => {
   }
 };
 
-module.exports = { postAdminRequestHandler };
+const getAdminStatusHandler = async (req, res) => {
+  try {
+    const email = req.params.id;
+
+    const response = await getByEmail(email);
+
+    if (!response) {
+      return res
+        .status(500)
+        .json({ message: `User with email ${email} doesn't exist` })
+        .end();
+    }
+
+    return res
+      .json({
+        isAdmin: response?.isAdmin || false,
+      })
+      .end();
+  } catch (err) {
+    return res.status(500).json({ message: err?.message });
+  }
+};
+
+module.exports = { postAdminRequestHandler, getAdminStatusHandler };
