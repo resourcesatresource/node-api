@@ -15,13 +15,27 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  isAdmin: Boolean,
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  requests: [
+    {
+      requesterEmailId: { type: String, required: true },
+      timestamp: { type: Date, default: Date.now },
+    },
+  ],
 });
 
 // adding token generation method
 userSchema.methods.generateAuthToken = function () {
   return jwt.sign(
-    { _id: this._id, isAdmin: this.isAdmin, name: this.name },
+    {
+      _id: this._id,
+      isAdmin: this.isAdmin,
+      name: this.name,
+      email: this.email,
+    },
     config.get("jwtprivatekey")
   );
 };
@@ -32,8 +46,11 @@ const getByEmail = (email) => {
   return User.findOne({ email });
 };
 
-const update = (email, params) => {
-  return User.findOneAndUpdate({ email }, params, { returnDocument: "after" });
+const update = (email, params, options) => {
+  return User.findOneAndUpdate({ email }, params, {
+    returnDocument: "after",
+    ...options,
+  });
 };
 // model
 

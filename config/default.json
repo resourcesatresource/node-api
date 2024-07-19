@@ -1,4 +1,9 @@
 {
   "databaseUrl": "",
-  "jwtprivatekey": ""
+  "jwtprivatekey": "",
+  "config": {
+    "project": {
+      "superuser": ""
+    }
+  }
 }

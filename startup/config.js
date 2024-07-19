@@ -1,7 +1,7 @@
 const config = require("config");
 module.exports = function () {
-  if (!config.get("jwtprivatekey")) {
-    console.error("FATAL ERROR: jwtprivatekey not defined");
+  if (!config.has("jwtprivatekey") || !config.has("databaseUrl")) {
+    console.error("FATAL ERROR: jwtprivatekey and databaseUrl not defined");
     process.exit(1);
   }
 };

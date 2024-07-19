@@ -5,7 +5,7 @@ const app = express();
 const cors = require("cors");
 app.use(cors());
 require("./startup/routes")(app);
-// require("./startup/config")();
+require("./startup/config")();
 require("./startup/prod")(app);
 app.set("view-engine", "ejs");
 app.get("/", (req, res) => {

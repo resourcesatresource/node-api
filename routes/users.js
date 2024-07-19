@@ -7,6 +7,7 @@ const { User } = require("../models/user");
 const {
   postAdminRequestHandler,
   getAdminStatusHandler,
+  postAdminHandler,
 } = require("../controller/users");
 const admin = require("../middleware/admin");
 
@@ -45,7 +46,9 @@ router.post("/", async (req, res) => {
     .send(_.pick(user, ["name", "email", "password"]));
 });
 
-router.post("/admin", [auth, admin], postAdminRequestHandler);
+router.post("/admin", auth, postAdminRequestHandler);
+
+router.post("/admin/:id", [auth, admin], postAdminHandler);
 
 router.get("/admin/:id", getAdminStatusHandler);
 

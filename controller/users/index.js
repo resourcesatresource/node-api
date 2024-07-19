@@ -1,32 +1,41 @@
+const config = require("config");
 const { getByEmail, update } = require("../../models/user");
-const { validateInputFields } = require("../../validators");
-const { postAdminRequestSchema } = require("../../validators/users");
+const { checkIfAlreadyRequested } = require("./helpers");
 
 const postAdminRequestHandler = async (req, res) => {
   try {
-    validateInputFields(postAdminRequestSchema, req.body, res);
+    const recipent = config.get("config.project.superuser");
 
-    const { email } = req.body;
+    const { email: requesterEmailId } = req.user;
 
-    const user = await getByEmail(email);
+    const requester = await getByEmail(requesterEmailId);
 
-    if (!user) {
+    if (requester?.isAdmin) {
       return res
         .status(400)
-        .json({ message: `Requested user ${email} is not a user` })
+        .json({ message: "Requested user is already an admin" })
         .end();
     }
 
-    if (user?.isAdmin) {
+    const superUser = await getByEmail(recipent);
+
+    const requested = checkIfAlreadyRequested(
+      superUser?.requests ?? [],
+      requesterEmailId
+    );
+
+    if (requested) {
       return res
         .status(400)
-        .json({ message: `Requested user ${email} is already an admin` })
+        .json({ message: "You have already requested for admin access" })
         .end();
     }
 
-    const response = await update(email, { isAdmin: true });
+    const response = await update(recipent, {
+      $addToSet: { requests: { requesterEmailId: requesterEmailId } },
+    });
 
-    if (!response?.isAdmin) {
+    if (!response) {
       return res
         .status(500)
         .json({ message: "Unable to complete the request!" })
@@ -62,4 +71,40 @@ const getAdminStatusHandler = async (req, res) => {
   }
 };
 
-module.exports = { postAdminRequestHandler, getAdminStatusHandler };
+const postAdminHandler = async (req, res) => {
+  try {
+    const { id: requesterEmailId } = req.params;
+    const { email: adminId } = req.user;
+
+    const adminData = await getByEmail(adminId);
+
+    const requested = checkIfAlreadyRequested(
+      adminData?.requests ?? [],
+      requesterEmailId
+    );
+
+    if (!requested) {
+      return res
+        .status(400)
+        .json({ message: `This user was not in requester list` })
+        .end();
+    }
+
+    await Promise.all([
+      update(requesterEmailId, { isAdmin: true }),
+      update(adminId, {
+        $pull: { requests: { requesterEmailId: requesterEmailId } },
+      }),
+    ]);
+
+    return res.end();
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+module.exports = {
+  postAdminHandler,
+  postAdminRequestHandler,
+  getAdminStatusHandler,
+};
