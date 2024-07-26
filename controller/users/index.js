@@ -4,7 +4,7 @@ const { checkIfAlreadyRequested } = require("./helpers");
 
 const postAdminRequestHandler = async (req, res) => {
   try {
-    const recipent = config.get("config.project.superuser");
+    const recipient = config.get("config.project.superuser");
 
     const { email: requesterEmailId } = req.user;
 
@@ -17,7 +17,7 @@ const postAdminRequestHandler = async (req, res) => {
         .end();
     }
 
-    const superUser = await getByEmail(recipent);
+    const superUser = await getByEmail(recipient);
 
     const requested = checkIfAlreadyRequested(
       superUser?.requests ?? [],
@@ -31,7 +31,7 @@ const postAdminRequestHandler = async (req, res) => {
         .end();
     }
 
-    const response = await update(recipent, {
+    const response = await update(recipient, {
       $addToSet: { requests: { requesterEmailId: requesterEmailId } },
     });
 
