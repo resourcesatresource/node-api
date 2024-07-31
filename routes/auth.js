@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { User } = require("../models/user");
-const _ = require("lodash");
+const { pick } = require("lodash");
 const { validateInputFields } = require("../validators");
 const { postUserAuthenticationSchema } = require("../validators/users");
 const { asyncWrapper } = require("../utils");
@@ -23,7 +23,7 @@ router.post(
     }
 
     const secureToken = user.generateAuthToken();
-    const response = _.pick(user, ["_id", "name", "email", "isAdmin"]);
+    const response = pick(user, ["_id", "name", "email", "isAdmin"]);
 
     return res.json({ secureToken, user: response });
   })
