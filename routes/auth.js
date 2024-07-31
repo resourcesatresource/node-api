@@ -2,22 +2,31 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { User } = require("../models/user");
+const { pick } = require("lodash");
+const { validateInputFields } = require("../validators");
+const { postUserAuthenticationSchema } = require("../validators/users");
+const { asyncWrapper } = require("../utils");
 
-// Login route
-// This will authenticate the user and return jwt token
-router.post("/", async (req, res) => {
-  let user = await User.findOne({ email: req.body.email });
-  if (!user) return res.send("user not found").status(400);
+router.post(
+  "/",
+  asyncWrapper(async (req, res) => {
+    validateInputFields(postUserAuthenticationSchema, req.body);
 
-  const isValid = await bcrypt.compare(req.body.password, user.password);
-  if (!isValid) {
-    return res.status(400).send("Invalid Password or User");
-  }
-  const token = user.generateAuthToken();
+    const { email, password } = req.body;
 
-  res.header("isAdmin", user?.isAdmin || false);
+    const user = await User.findOne({ email });
+    if (!user) throw Error("400:User not found for this id");
 
-  res.status(200).send(token);
-});
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      throw Error("400:Invalid Password for the user");
+    }
+
+    const secureToken = user.generateAuthToken();
+    const response = pick(user, ["_id", "name", "email", "isAdmin"]);
+
+    return res.json({ secureToken, user: response });
+  })
+);
 
 module.exports = router;
