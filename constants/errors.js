@@ -15,6 +15,10 @@ const ERROR_TYPE = {
     code: 500,
     message: "No records found in DB",
   },
+  recordAlreadyExists: {
+    code: 500,
+    message: "Record already exists in DB",
+  },
 };
 
 const getErrorDetails = (kind) => {

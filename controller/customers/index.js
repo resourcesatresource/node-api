@@ -36,12 +36,14 @@ const postCustomerHandler = async (req, res) => {
 
   let user = await find(Customer, { userId });
 
-  if (isEmpty(user)) {
-    user = await create(Customer, {
-      userId,
-      name,
-    });
+  if (!isEmpty(user)) {
+    throwError("recordAlreadyExists");
   }
+
+  user = await create(Customer, {
+    userId,
+    name,
+  });
 
   return res.send(user).end();
 };
