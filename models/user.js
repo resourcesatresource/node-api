@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const config = require("config");
+const { Customer } = require("./customer");
 
-// Schema
 const userSchema = mongoose.Schema({
   name: {
     type: String,
@@ -40,6 +40,21 @@ userSchema.methods.generateAuthToken = function () {
   );
 };
 
+/* 
+  initialize customer collection
+*/
+userSchema.post("save", async function (doc) {
+  const newCustomer = {
+    userId: doc._id,
+    name: doc.name,
+  };
+  try {
+    await Customer.create(newCustomer);
+  } catch (error) {
+    // Todo: Will log it for better debugging
+  }
+});
+
 const User = new mongoose.model("user", userSchema);
 
 const getByEmail = (email) => {
@@ -52,6 +67,5 @@ const update = (email, params, options) => {
     ...options,
   });
 };
-// model
 
 module.exports = { User, getByEmail, update };
