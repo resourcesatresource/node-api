@@ -4,11 +4,12 @@ const genres = require("../routes/genres");
 const customers = require("../routes/customers");
 const user = require("../routes/users");
 const auth = require("../routes/auth");
-const error = require("../middleware/error");
+const { error, logger } = require("../middleware");
 
 module.exports = function (app) {
   // api endpoints
   app.use(express.json());
+  app.use(logger);
 
   app.use("/api/genres", genres);
   app.use("/api/customers", customers);
