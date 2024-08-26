@@ -4,7 +4,7 @@ const { update, find, create } = require("../../helpers/tables");
 const { Customer } = require("../../models/customer");
 const { constructObjectId } = require("../../utils/db");
 const { patchConnectionSchema } = require("../../validators/customers");
-const { validateInputFields } = require("../../validators/index");
+const { validateInputFields } = require("../../validators/");
 const { throwError } = require("../../utils/errors");
 
 const getCustomersHandler = async (_, res) => {
@@ -14,7 +14,7 @@ const getCustomersHandler = async (_, res) => {
     throwError("noRecordsFound");
   }
 
-  return res.json(user);
+  return res.json(user).end();
 };
 
 const getCustomerDetailsHandler = async (req, res) => {
@@ -28,7 +28,7 @@ const getCustomerDetailsHandler = async (req, res) => {
     throwError("unableToAccessData");
   }
 
-  res.json(user).end();
+  return res.json(user).end();
 };
 
 const postCustomerHandler = async (req, res) => {
