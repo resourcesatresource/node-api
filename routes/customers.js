@@ -1,22 +1,22 @@
 const express = require("express");
-const auth = require("../middleware/auth");
+
+const { admin, auth } = require("../middleware");
+const {
+  patchConnectionHandler,
+  getCustomersHandler,
+  getCustomerDetailsHandler,
+  postCustomerHandler,
+} = require("../controller/customers");
+const { asyncWrapper } = require("../utils");
+
 const router = express.Router();
-// importing customer module
-const Customer = require("../models/customer");
 
-router.get("/", auth, async (req, res) => {
-  const user = await Customer.find();
-  res.send(user);
-});
+router.get("/", [auth, admin], asyncWrapper(getCustomersHandler));
 
-router.post("/", auth, async (req, res) => {
-  let newUser = new Customer({
-    name: req.body.name,
-    phone: req.body.phone,
-    isGold: req.body.isGold,
-  });
-  const addedUser = await newUser.save();
-  res.send(addedUser);
-});
+router.post("/", auth, asyncWrapper(postCustomerHandler));
+
+router.get("/:id", asyncWrapper(getCustomerDetailsHandler));
+
+router.patch("/connections", auth, asyncWrapper(patchConnectionHandler));
 
 module.exports = router;
