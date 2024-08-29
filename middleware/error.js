@@ -20,5 +20,5 @@ module.exports = function (err, req, res, next) {
     code = 500;
   }
 
-  return res.status(+code).json({ message: message }).end();
+  return res.status(+code).json({ message }).end();
 };

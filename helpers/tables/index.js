@@ -14,4 +14,8 @@ const create = (model, params) => {
   return instance.save();
 };
 
-module.exports = { find, create, update };
+const findOne = (model, filter) => {
+  return model.findOne(filter);
+};
+
+module.exports = { find, create, update, findOne };

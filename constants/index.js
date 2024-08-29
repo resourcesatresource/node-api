@@ -3,4 +3,6 @@ const ENVIRONMENT = {
   production: "production",
 };
 
-module.exports = { ENVIRONMENT };
+const MAX_ENCRYPTION_ROUND = 10;
+
+module.exports = { ENVIRONMENT, MAX_ENCRYPTION_ROUND };
