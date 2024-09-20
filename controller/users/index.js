@@ -36,8 +36,10 @@ const postUserHandler = async (req, res) => {
   const secureToken = user.generateAuthToken();
 
   return res
-    .header("x-auth-token", secureToken)
-    .json(pick(user, ["name", "email"]))
+    .json({
+      ...pick(user, ["_id", "name", "email", "isAdmin"]),
+      token: secureToken,
+    })
     .end();
 };
 
