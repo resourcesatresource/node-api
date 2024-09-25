@@ -1,21 +1,24 @@
-// importing endpoints
 const express = require("express");
-const genres = require("../routes/genres");
-const customers = require("../routes/customers");
-const user = require("../routes/users");
-const auth = require("../routes/auth");
+const { genres, customers, users, auth } = require("../routes");
 const { error, logger } = require("../middleware");
 
 module.exports = function (app) {
-  // api endpoints
   app.use(express.json());
+
+  /*
+    `logger` middleware logs the http(s) requests info when the
+    development environment is running.
+  */
   app.use(logger);
 
   app.use("/api/genres", genres);
   app.use("/api/customers", customers);
-  app.use("/api/users", user);
+  app.use("/api/users", users);
   app.use("/api/auth", auth);
 
-  // error handling middleware
+  /*
+    This middleware catches the any error occurred while completing
+    the whole process and it formats the error and return response.
+  */
   app.use(error);
 };

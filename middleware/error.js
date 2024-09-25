@@ -1,3 +1,5 @@
+const { ENVIRONMENT } = require("../constants");
+
 /*
   This middleware captures error and formats it
   with status code and returns error message in response
@@ -20,5 +22,12 @@ module.exports = function (err, req, res, next) {
     code = 500;
   }
 
-  return res.status(+code).json({ message: message }).end();
+  if (process.env.NODE_ENV === ENVIRONMENT.development) {
+    console.log({
+      errorCode: code,
+      errorMessage: message,
+    });
+  }
+
+  return res.status(+code).json({ message }).end();
 };
