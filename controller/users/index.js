@@ -117,10 +117,19 @@ const postAdminHandler = async (req, res) => {
   return res.end();
 };
 
+const getAdminRequestsHandler = async (req, res) => {
+  const { email } = req.user;
+
+  const user = await getByEmail(email);
+
+  return res.json(user?.requests ?? []);
+};
+
 module.exports = {
   getUserHandler,
   postUserHandler,
   postAdminHandler,
+  getAdminRequestsHandler,
   postAdminRequestHandler,
   getAdminStatusHandler,
 };

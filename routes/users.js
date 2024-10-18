@@ -7,6 +7,7 @@ const {
   postAdminRequestHandler,
   getAdminStatusHandler,
   postAdminHandler,
+  getAdminRequestsHandler,
 } = require("../controller/users");
 const { asyncWrapper } = require("../utils");
 
@@ -15,6 +16,8 @@ const router = express.Router();
 router.get("/", [auth, admin], asyncWrapper(getUserHandler));
 
 router.post("/", asyncWrapper(postUserHandler));
+
+router.get("/admin/", [auth, admin], asyncWrapper(getAdminRequestsHandler));
 
 router.post("/admin", auth, asyncWrapper(postAdminRequestHandler));
 
