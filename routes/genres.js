@@ -18,6 +18,6 @@ router.post("/", auth, asyncWrapper(postGenresHandler));
 
 router.put("/:id", auth, asyncWrapper(putGenreHandler));
 
-router.delete("/:id", [auth, admin], asyncWrapper(deleteGenresHandler));
+router.delete("/:id", [auth], asyncWrapper(deleteGenresHandler));
 
 module.exports = router;

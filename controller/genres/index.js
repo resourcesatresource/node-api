@@ -26,9 +26,11 @@ const postGenresHandler = async (req, res) => {
   validateInputFields(postSchema, req.body, res);
 
   const { name } = req.body;
+  const { _id: author } = req.user;
 
   const genre = new Genre({
     name,
+    author,
   });
 
   const response = await genre.save();
@@ -38,6 +40,7 @@ const postGenresHandler = async (req, res) => {
 
 const deleteGenresHandler = async (req, res) => {
   const id = req.params.id;
+  const { isAdmin, _id: userId } = req.user;
   const isValid = validateObjectId(id);
 
   if (!isValid) {
@@ -46,6 +49,12 @@ const deleteGenresHandler = async (req, res) => {
 
   const genre = await getById(id);
   if (!genre) throw Error("404:The genre with the given ID was not found.");
+
+  if (!isAdmin) {
+    if (userId !== genre?.author?.toString()) {
+      throw Error("404: You don't have delete access.");
+    }
+  }
 
   const response = await deleteById(id);
 
