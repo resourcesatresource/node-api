@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const validateInputFields = (schema, input, res) => {
+const validateInputFields = (schema, input) => {
   const { error } = schema.validate(input);
 
   if (error) {

@@ -1,51 +1,94 @@
+const HttpStatusCodes = require("./https");
+
+const ErrorKind = {
+  unRecognized: "unRecognized",
+  unableToInsertData: "unableToInsertData",
+  unableToAccessData: "unableToAccessData",
+  unableToDeleteData: "unableToDeleteData",
+  unableToUpdateData: "unableToUpdateData",
+  unableToCompleteRequest: "unableToCompleteRequest",
+  unauthorized: "unauthorized",
+  noRecordsFound: "noRecordsFound",
+  notAllowedToDelete: "notAllowedToDelete",
+  notAllowedToEdit: "notAllowedToEdit",
+  recordAlreadyExists: "recordAlreadyExists",
+  userAlreadyExists: "userAlreadyExists",
+  userAlreadyAdmin: "userAlreadyAdmin",
+  userAlreadyRequestedForAdmin: "userAlreadyRequestedForAdmin",
+  userWithEmailNotExists: "userWithEmailNotExists",
+  userNotInRequestersList: "userNotInRequestersList",
+  invalidPassword: "invalidPassword",
+};
+
 const ERROR_TYPE = {
-  unRecognized: {
-    code: 500,
-    message: "Something went wrong",
+  [ErrorKind.unRecognized]: {
+    code: HttpStatusCodes.INTERNAL_SERVER_ERROR,
+    message: "Something went wrong!",
   },
-  unableToInsertData: {
-    code: 500,
-    message: "Unable to insert data into DB",
+  [ErrorKind.unableToInsertData]: {
+    code: HttpStatusCodes.INTERNAL_SERVER_ERROR,
+    message: "Unable to insert data.",
   },
-  unableToAccessData: {
-    code: 500,
-    message: "Unable to access data",
+  [ErrorKind.unableToAccessData]: {
+    code: HttpStatusCodes.INTERNAL_SERVER_ERROR,
+    message: "Unable to access data.",
   },
-  unableToCompleteRequest: {
-    code: 500,
-    message: "Unable to complete the request!",
+  [ErrorKind.unableToDeleteData]: {
+    code: HttpStatusCodes.INTERNAL_SERVER_ERROR,
+    message: "Unable to delete data.",
   },
-  noRecordsFound: {
-    code: 500,
-    message: "No records found in DB",
+  [ErrorKind.unableToUpdateData]: {
+    code: HttpStatusCodes.INTERNAL_SERVER_ERROR,
+    message: "Unable to update data.",
   },
-  recordAlreadyExists: {
-    code: 500,
-    message: "Record already exists in DB",
+  [ErrorKind.unableToCompleteRequest]: {
+    code: HttpStatusCodes.INTERNAL_SERVER_ERROR,
+    message: "Unable to complete the request.",
   },
-  userAlreadyExists: {
-    code: 400,
-    message: "User already exists with this email",
+  [ErrorKind.noRecordsFound]: {
+    code: HttpStatusCodes.NOT_FOUND,
+    message: "No records found for this resource.",
   },
-  userAlreadyAdmin: {
-    code: 400,
-    message: "Requested user is already an admin",
+  [ErrorKind.notAllowedToDelete]: {
+    code: HttpStatusCodes.FORBIDDEN,
+    message: "You don't have proper access to delete this resource.",
   },
-  userAlreadyRequestedForAdmin: {
-    code: 400,
-    message: "You have already requested for admin access",
+  [ErrorKind.notAllowedToEdit]: {
+    code: HttpStatusCodes.FORBIDDEN,
+    message: "You don't have proper access to edit this resource.",
   },
-  userWithEmailNotExists: {
-    code: 500,
-    message: "User with the given email doesn't exists",
+  [ErrorKind.unauthorized]: {
+    code: HttpStatusCodes.UNAUTHORIZED,
+    message: "Not authorized.",
   },
-  userNotInRequestersList: {
-    code: 500,
-    message: "This user was not in requester list",
+  [ErrorKind.recordAlreadyExists]: {
+    code: HttpStatusCodes.INTERNAL_SERVER_ERROR,
+    message: "Record already exists.",
   },
-  invalidPassword: {
-    code: 400,
-    message: "Invalid Password for the user",
+  [ErrorKind.userAlreadyExists]: {
+    code: HttpStatusCodes.BAD_REQUEST,
+    message: "User already exists with this email.",
+  },
+  [ErrorKind.userAlreadyAdmin]: {
+    code: HttpStatusCodes.BAD_REQUEST,
+    message: "Requested user is already an admin.",
+  },
+  [ErrorKind.userAlreadyRequestedForAdmin]: {
+    code: HttpStatusCodes.BAD_REQUEST,
+    message:
+      "You have already requested for admin access. Please wait until it is approved.",
+  },
+  [ErrorKind.userWithEmailNotExists]: {
+    code: HttpStatusCodes.INTERNAL_SERVER_ERROR,
+    message: "User with the given email doesn't exists.",
+  },
+  [ErrorKind.userNotInRequestersList]: {
+    code: HttpStatusCodes.INTERNAL_SERVER_ERROR,
+    message: "This user was not in requester list.",
+  },
+  [ErrorKind.invalidPassword]: {
+    code: HttpStatusCodes.BAD_REQUEST,
+    message: "Invalid Password for the user.",
   },
 };
 
@@ -53,4 +96,4 @@ const getErrorDetails = (kind) => {
   return ERROR_TYPE?.[kind] ?? ERROR_TYPE.unRecognized;
 };
 
-module.exports = { getErrorDetails };
+module.exports = { getErrorDetails, ErrorKind };

@@ -1,18 +1,30 @@
 require("dotenv").config();
-require("./startup/db")();
+const config = require("config");
+const cors = require("cors");
+
+const initDB = require("./startup/db");
+const initRoute = require("./startup/routes");
+const initConfig = require("./startup/config");
+const initProductionSetup = require("./startup/prod");
+
 const express = require("express");
 const app = express();
-const cors = require("cors");
 app.use(cors());
-require("./startup/routes")(app);
-require("./startup/config")();
-require("./startup/prod")(app);
+
+initConfig(); /* Validates if we have necessary configs in .env */
+initDB();
+initRoute(app);
+initProductionSetup(app);
+
 app.set("view-engine", "ejs");
+
 app.get("/", (req, res) => {
   res.status(200).render("index.ejs");
 });
-app.get("*", (req, res) => {
-  res.redirect("/");
+
+app.all("*", (req, res) => {
+  res.status(404).json({ message: "not found" }).end();
 });
-const port = process.env.PORT || 3000;
+
+const port = config.get("port") || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
