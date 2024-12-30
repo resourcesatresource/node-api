@@ -5,6 +5,11 @@ const genreSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  author: {
+    type: mongoose.Types.ObjectId,
+    ref: "users",
+    required: true,
+  },
 });
 
 const Genre = mongoose.model("Genre", genreSchema);

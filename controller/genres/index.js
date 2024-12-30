@@ -1,4 +1,6 @@
+const { ErrorKind } = require("../../constants/errors");
 const { Genre, deleteById, getById } = require("../../models/genre");
+const { throwError } = require("../../utils/errors");
 const { validateInputFields, validateObjectId } = require("../../validators");
 const { postSchema } = require("../../validators/genres");
 
@@ -12,58 +14,85 @@ const getGenreHandler = async (req, res) => {
   const isValid = validateObjectId(id);
 
   if (!isValid) {
-    throw Error("404:This genre doesn't exist");
+    throwError(ErrorKind.noRecordsFound);
   }
 
   const genre = await Genre.findOne({ _id: req.params.id });
 
-  if (!genre) throw Error("404:The genre with the given ID was not found.");
+  if (!genre) {
+    throwError(ErrorKind.noRecordsFound);
+  }
 
   return res.json(genre);
 };
 
 const postGenresHandler = async (req, res) => {
-  validateInputFields(postSchema, req.body, res);
+  validateInputFields(postSchema, req.body);
 
   const { name } = req.body;
+  const { _id: author } = req.user;
 
   const genre = new Genre({
     name,
+    author,
   });
 
   const response = await genre.save();
+
+  if (!response) {
+    throwError(ErrorKind.unableToInsertData);
+  }
 
   res.json(response);
 };
 
 const deleteGenresHandler = async (req, res) => {
   const id = req.params.id;
+  const { isAdmin, _id: userId } = req.user;
   const isValid = validateObjectId(id);
 
   if (!isValid) {
-    throw Error("404:The genre with the given ID was not found.");
+    throwError(ErrorKind.noRecordsFound);
   }
 
   const genre = await getById(id);
-  if (!genre) throw Error("404:The genre with the given ID was not found.");
+  if (!genre) {
+    throwError(ErrorKind.noRecordsFound);
+  }
+
+  if (!isAdmin) {
+    if (userId !== genre?.author?.toString()) {
+      throwError(ErrorKind.notAllowedToDelete);
+    }
+  }
 
   const response = await deleteById(id);
 
-  if (!response) throw Error("404:The genre with the given ID was not found.");
+  if (!response) {
+    throwError(ErrorKind.unableToDeleteData);
+  }
 
   res.json({ response });
 };
 
 const putGenreHandler = async (req, res) => {
   const id = req.params.id;
+  const { _id: userId } = req.user;
   const isValid = validateObjectId(id);
 
   if (!isValid) {
-    throw Error("404:The genre with the given ID was not found.");
+    throwError(ErrorKind.noRecordsFound);
   }
 
   let genre = await Genre.findById(id);
-  if (!genre) throw Error("404:The genre with the given ID was not found.");
+
+  if (!genre) {
+    throwError(ErrorKind.noRecordsFound);
+  }
+
+  if (genre.author?.toString() !== userId) {
+    throwError(ErrorKind.notAllowedToEdit);
+  }
 
   validateInputFields(postSchema, req.body);
 
@@ -71,9 +100,11 @@ const putGenreHandler = async (req, res) => {
 
   genre.name = name;
   genre = await genre.save();
+
   if (!genre) {
-    throw Error("Unable to update data");
+    throwError(ErrorKind.unableToUpdateData);
   }
+
   return res.json(genre);
 };
 

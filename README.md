@@ -1,5 +1,10 @@
 # node-api
 
+## [0.0.23-rc-0]
+
+- Added new field in genre to store author context
+- User can now delete genre if they are author
+
 ## [0.0.23]
 
 - Customers route for create, update and get connections
