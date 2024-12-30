@@ -1,4 +1,5 @@
 {
+  "port": "PORT",
   "databaseUrl": "DB_URL",
   "jwtprivatekey": "PRIVATE_JWT_KEY",
   "config": {

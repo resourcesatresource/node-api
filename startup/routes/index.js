@@ -1,6 +1,7 @@
 const express = require("express");
-const { genres, customers, users, auth } = require("../routes");
-const { error, logger } = require("../middleware");
+
+const api = require("./api");
+const { error, logger } = require("../../middleware");
 
 module.exports = function (app) {
   app.use(express.json());
@@ -11,10 +12,7 @@ module.exports = function (app) {
   */
   app.use(logger);
 
-  app.use("/api/genres", genres);
-  app.use("/api/customers", customers);
-  app.use("/api/users", users);
-  app.use("/api/auth", auth);
+  app.use("/api", api);
 
   /*
     This middleware catches the any error occurred while completing
