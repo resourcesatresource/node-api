@@ -8,10 +8,15 @@ const {
   postCustomerHandler,
 } = require("../controller/customers");
 const { asyncWrapper } = require("../utils");
+const { AdminAccessLevel } = require("../constants/enum");
 
 const router = express.Router();
 
-router.get("/", [auth, admin], asyncWrapper(getCustomersHandler));
+router.get(
+  "/",
+  [auth, admin([AdminAccessLevel.superUser])],
+  asyncWrapper(getCustomersHandler)
+);
 
 router.post("/", auth, asyncWrapper(postCustomerHandler));
 

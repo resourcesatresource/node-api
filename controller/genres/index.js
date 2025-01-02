@@ -11,11 +11,8 @@ const getGenresHandler = async (_, res) => {
 
 const getGenreHandler = async (req, res) => {
   const id = req.params.id;
-  const isValid = validateObjectId(id);
 
-  if (!isValid) {
-    throwError(ErrorKind.noRecordsFound);
-  }
+  validateObjectId(id);
 
   const genre = await Genre.findOne({ _id: req.params.id });
 
@@ -49,11 +46,8 @@ const postGenresHandler = async (req, res) => {
 const deleteGenresHandler = async (req, res) => {
   const id = req.params.id;
   const { isAdmin, _id: userId } = req.user;
-  const isValid = validateObjectId(id);
 
-  if (!isValid) {
-    throwError(ErrorKind.noRecordsFound);
-  }
+  validateObjectId(id);
 
   const genre = await getById(id);
   if (!genre) {
@@ -78,11 +72,8 @@ const deleteGenresHandler = async (req, res) => {
 const putGenreHandler = async (req, res) => {
   const id = req.params.id;
   const { _id: userId } = req.user;
-  const isValid = validateObjectId(id);
 
-  if (!isValid) {
-    throwError(ErrorKind.noRecordsFound);
-  }
+  validateObjectId(id);
 
   let genre = await Genre.findById(id);
 

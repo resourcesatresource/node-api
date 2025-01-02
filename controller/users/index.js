@@ -8,10 +8,17 @@ const { generateHash } = require("../../services/bcrypt");
 const { throwError } = require("../../utils/errors");
 const { create, find } = require("../../helpers/tables");
 const { postUserSchema } = require("../../validators/users");
+const { ErrorKind } = require("../../constants/errors");
 
 const getUserHandler = async (_, res) => {
   const users = await find(User);
   return res.json(users).end();
+};
+
+const getAdminsHandler = async (_, res) => {
+  const admins = await find(User, { isAdmin: true });
+
+  return res.json(admins ?? []);
 };
 
 const postUserHandler = async (req, res) => {
@@ -125,11 +132,32 @@ const getAdminRequestsHandler = async (req, res) => {
   return res.json(user?.requests ?? []);
 };
 
+const postAdminRevokeHandler = async (req, res) => {
+  const { id: email } = req.params;
+
+  const user = await getByEmail(email);
+
+  if (!user) {
+    throwError(ErrorKind.userWithEmailNotExists);
+  }
+
+  if (!user.isAdmin) {
+    throwError(ErrorKind.userNotAdmin);
+  }
+
+  user.isAdmin = false;
+  user.save();
+
+  return res.json({ status: true }).end();
+};
+
 module.exports = {
   getUserHandler,
   postUserHandler,
+  getAdminsHandler,
   postAdminHandler,
   getAdminRequestsHandler,
   postAdminRequestHandler,
   getAdminStatusHandler,
+  postAdminRevokeHandler,
 };
