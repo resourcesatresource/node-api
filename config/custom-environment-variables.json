@@ -1,5 +1,6 @@
 {
   "port": "PORT",
+  "prodDatabaseUrl": "PRODUCTION_DB_URL",
   "databaseUrl": "DB_URL",
   "jwtprivatekey": "PRIVATE_JWT_KEY",
   "config": {

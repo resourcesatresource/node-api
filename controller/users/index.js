@@ -15,6 +15,24 @@ const getUserHandler = async (_, res) => {
   return res.json(users).end();
 };
 
+const getAdminsHandler = async (req, res) => {
+  const superUserEmail = config.get("config.project.superuser");
+
+  const { email } = req.user;
+
+  if (email !== superUserEmail) {
+    throwError(ErrorKind.unauthorizedNotSuperAdmin);
+  }
+
+  const admins = await find(User, { isAdmin: true });
+
+  const response = (admins ?? []).filter(
+    ({ email }) => email !== superUserEmail
+  );
+
+  return res.json(response);
+};
+
 const postUserHandler = async (req, res) => {
   validateInputFields(postUserSchema, req.body);
 
@@ -159,11 +177,41 @@ const postAdminHandler = async (req, res) => {
   return res.end();
 };
 
+const getAdminRequestsHandler = async (req, res) => {
+  const { email } = req.user;
+
+  const user = await getByEmail(email);
+
+  return res.json(user?.requests ?? []);
+};
+
+const postAdminRevokeHandler = async (req, res) => {
+  const { id: email } = req.params;
+
+  const user = await getByEmail(email);
+
+  if (!user) {
+    throwError(ErrorKind.userWithEmailNotExists);
+  }
+
+  if (!user.isAdmin) {
+    throwError(ErrorKind.userNotAdmin);
+  }
+
+  user.isAdmin = false;
+  user.save();
+
+  return res.json({ status: true }).end();
+};
+
 module.exports = {
   getUserHandler,
   postUserHandler,
   postResetPasswordHandler,
+  getAdminsHandler,
   postAdminHandler,
+  getAdminRequestsHandler,
   postAdminRequestHandler,
   getAdminStatusHandler,
+  postAdminRevokeHandler,
 };

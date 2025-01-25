@@ -4,14 +4,15 @@ const { update, find, create } = require("../../helpers/tables");
 const { Customer } = require("../../models/customer");
 const { constructObjectId } = require("../../utils/db");
 const { patchConnectionSchema } = require("../../validators/customers");
-const { validateInputFields } = require("../../validators/");
+const { validateInputFields, validateObjectId } = require("../../validators/");
 const { throwError } = require("../../utils/errors");
+const { ErrorKind } = require("../../constants/errors");
 
 const getCustomersHandler = async (_, res) => {
   const user = await find(Customer);
 
   if (isEmpty(user)) {
-    throwError("noRecordsFound");
+    throwError(ErrorKind.noRecordsFound);
   }
 
   return res.json(user).end();
@@ -20,12 +21,14 @@ const getCustomersHandler = async (_, res) => {
 const getCustomerDetailsHandler = async (req, res) => {
   const { id } = req.params;
 
+  validateObjectId(id);
+
   const userId = constructObjectId(id);
 
   const user = await find(Customer, { userId });
 
   if (isEmpty(user)) {
-    throwError("unableToAccessData");
+    throwError(ErrorKind.unableToAccessData);
   }
 
   return res.json(user).end();
@@ -37,7 +40,7 @@ const postCustomerHandler = async (req, res) => {
   let user = await find(Customer, { userId });
 
   if (!isEmpty(user)) {
-    throwError("recordAlreadyExists");
+    throwError(ErrorKind.recordAlreadyExists);
   }
 
   user = await create(Customer, {
@@ -64,7 +67,7 @@ const patchConnectionHandler = async (req, res) => {
   );
 
   if (isEmpty(response)) {
-    throwError("unableToInsertData");
+    throwError(ErrorKind.unableToInsertData);
   }
 
   return res.json(response).end();

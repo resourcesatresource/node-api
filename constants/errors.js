@@ -8,6 +8,9 @@ const ErrorKind = {
   unableToUpdateData: "unableToUpdateData",
   unableToCompleteRequest: "unableToCompleteRequest",
   unauthorized: "unauthorized",
+  unauthorizedNotAdmin: "unauthorizedNotAdmin",
+  unauthorizedNotProperAccess: "unauthorizedNotProperAccess",
+  unauthorizedNotSuperAdmin: "unauthorizedNotSuperAdmin",
   noRecordsFound: "noRecordsFound",
   notAllowedToDelete: "notAllowedToDelete",
   notAllowedToEdit: "notAllowedToEdit",
@@ -17,6 +20,7 @@ const ErrorKind = {
   userAlreadyRequestedForAdmin: "userAlreadyRequestedForAdmin",
   userWithEmailNotExists: "userWithEmailNotExists",
   userNotInRequestersList: "userNotInRequestersList",
+  userNotAdmin: "userNotAdmin",
   invalidPassword: "invalidPassword",
   invalidCurrentPassword: "invalidCurrentPassword",
   newPasswordMustNotBeSame: "newPasswordMustNotBeSame",
@@ -88,9 +92,29 @@ const ERROR_TYPE = {
     code: HttpStatusCodes.INTERNAL_SERVER_ERROR,
     message: "This user was not in requester list.",
   },
+  [ErrorKind.userNotAdmin]: {
+    code: HttpStatusCodes.BAD_REQUEST,
+    message: "User was not an admin.",
+  },
   [ErrorKind.invalidPassword]: {
     code: HttpStatusCodes.BAD_REQUEST,
     message: "Invalid Password for the user.",
+  },
+  [ErrorKind.unauthorized]: {
+    code: HttpStatusCodes.UNAUTHORIZED,
+    message: "Unauthorized!",
+  },
+  [ErrorKind.unauthorizedNotAdmin]: {
+    code: HttpStatusCodes.FORBIDDEN,
+    message: "Unauthorized as you are not an admin.",
+  },
+  [ErrorKind.unauthorizedNotProperAccess]: {
+    code: HttpStatusCodes.FORBIDDEN,
+    message: "Unauthorized as you don't have proper access for this resource.",
+  },
+  [ErrorKind.unauthorizedNotSuperAdmin]: {
+    code: HttpStatusCodes.FORBIDDEN,
+    message: "Unauthorized as you don't have the super admin privileges",
   },
   [ErrorKind.invalidCurrentPassword]: {
     code: HttpStatusCodes.BAD_REQUEST,
