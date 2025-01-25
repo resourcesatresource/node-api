@@ -1,5 +1,10 @@
 # node-api
 
+## [0.0.23]
+
+- Added new route for changing user password
+- Improved error handling and dev support
+
 ## [0.0.23-rc-0]
 
 - Added new field in genre to store author context
