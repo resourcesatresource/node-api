@@ -1,16 +1,19 @@
 const { ENVIRONMENT } = require("../constants");
 
+const DEFAULT = {
+  ERROR_MESSAGE: "Something went wrong",
+  ERROR_CODE: 500,
+};
+
 /*
   This middleware captures error and formats it
   with status code and returns error message in response.
 */
 module.exports = function (err, _, res, next) {
-  let code = 500,
-    message = "Something went wrong";
-
   const error = err?.message?.split(":");
 
-  [message, code, id] = error;
+  const [message = DEFAULT.ERROR_MESSAGE, code = DEFAULT.ERROR_CODE, id] =
+    error;
 
   if (+code < 100 || +code > 599) {
     code = 500;
