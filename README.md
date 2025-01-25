@@ -1,5 +1,10 @@
 # node-api
 
+## [0.0.24-rc-1]
+
+- Added new route GET route for admin requester list
+- Updated routes for requiring super admin access
+
 ## [0.0.23]
 
 - Added new route for changing user password
