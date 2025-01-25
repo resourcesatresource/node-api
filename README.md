@@ -2,6 +2,10 @@
 
 ## [0.0.24-rc-1]
 
+- Fixed authorization middleware using outdated config
+
+## [0.0.24-rc-0]
+
 - Added new route GET route for admin requester list
 - Updated routes for requiring super admin access
 
