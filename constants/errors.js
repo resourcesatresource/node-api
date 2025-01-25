@@ -21,6 +21,8 @@ const ErrorKind = {
   userNotInRequestersList: "userNotInRequestersList",
   userNotAdmin: "userNotAdmin",
   invalidPassword: "invalidPassword",
+  invalidCurrentPassword: "invalidCurrentPassword",
+  newPasswordMustNotBeSame: "newPasswordMustNotBeSame",
 };
 
 const ERROR_TYPE = {
@@ -108,6 +110,14 @@ const ERROR_TYPE = {
   [ErrorKind.unauthorizedNotProperAccess]: {
     code: HttpStatusCodes.FORBIDDEN,
     message: "Unauthorized as you don't have proper access for this resource.",
+  },
+  [ErrorKind.invalidCurrentPassword]: {
+    code: HttpStatusCodes.BAD_REQUEST,
+    message: "You have entered wrong current password.",
+  },
+  [ErrorKind.newPasswordMustNotBeSame]: {
+    code: HttpStatusCodes.BAD_REQUEST,
+    message: "New password and old password cannot be the same.",
   },
 };
 

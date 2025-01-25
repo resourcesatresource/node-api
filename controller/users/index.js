@@ -4,7 +4,7 @@ const { isEmpty, pick } = require("lodash");
 const { getByEmail, update, User } = require("../../models/user");
 const { checkIfAlreadyRequested } = require("./helpers");
 const { validateInputFields } = require("../../validators");
-const { generateHash } = require("../../services/bcrypt");
+const { compareHash, generateHash } = require("../../services/bcrypt");
 const { throwError } = require("../../utils/errors");
 const { create, find } = require("../../helpers/tables");
 const { postUserSchema } = require("../../validators/users");
@@ -48,6 +48,47 @@ const postUserHandler = async (req, res) => {
       token: secureToken,
     })
     .end();
+};
+
+const postResetPasswordHandler = async (req, res) => {
+  const { old: currentPassword, new: newPassword } = req.body;
+
+  const { email } = req.user;
+
+  const user = await find(User, { email });
+
+  const { password: storedHashedPassword } = user[0];
+
+  const currentPasswordConfirmation = await compareHash(
+    currentPassword,
+    storedHashedPassword
+  );
+
+  if (!currentPasswordConfirmation) {
+    throwError(
+      ErrorKind.invalidCurrentPassword,
+      ErrorKind.invalidCurrentPassword
+    );
+  }
+
+  const newHashedPassword = await generateHash(newPassword);
+
+  const isSame = await compareHash(newPassword, storedHashedPassword);
+
+  if (isSame) {
+    throwError(
+      ErrorKind.newPasswordMustNotBeSame,
+      ErrorKind.newPasswordMustNotBeSame
+    );
+  }
+
+  const updatedUser = await update(email, { password: newHashedPassword });
+
+  if (isEmpty(updatedUser)) {
+    throwError(ErrorKind.unableToUpdateData);
+  }
+
+  return res.json({ status: "OK" }).end();
 };
 
 const postAdminRequestHandler = async (req, res) => {
@@ -154,6 +195,7 @@ const postAdminRevokeHandler = async (req, res) => {
 module.exports = {
   getUserHandler,
   postUserHandler,
+  postResetPasswordHandler,
   getAdminsHandler,
   postAdminHandler,
   getAdminRequestsHandler,

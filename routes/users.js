@@ -5,6 +5,7 @@ const {
   getUserHandler,
   postUserHandler,
   postAdminRequestHandler,
+  postResetPasswordHandler,
   getAdminStatusHandler,
   postAdminHandler,
   getAdminRequestsHandler,
@@ -35,6 +36,7 @@ router.get(
   [auth, admin([AdminAccessLevel.superUser])],
   asyncWrapper(getAdminRequestsHandler)
 );
+router.post("/change-password", [auth], asyncWrapper(postResetPasswordHandler));
 
 router.post("/admin", auth, asyncWrapper(postAdminRequestHandler));
 
