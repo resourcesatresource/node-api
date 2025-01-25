@@ -18,6 +18,8 @@ const ErrorKind = {
   userWithEmailNotExists: "userWithEmailNotExists",
   userNotInRequestersList: "userNotInRequestersList",
   invalidPassword: "invalidPassword",
+  invalidCurrentPassword: "invalidCurrentPassword",
+  newPasswordMustNotBeSame: "newPasswordMustNotBeSame",
 };
 
 const ERROR_TYPE = {
@@ -89,6 +91,14 @@ const ERROR_TYPE = {
   [ErrorKind.invalidPassword]: {
     code: HttpStatusCodes.BAD_REQUEST,
     message: "Invalid Password for the user.",
+  },
+  [ErrorKind.invalidCurrentPassword]: {
+    code: HttpStatusCodes.BAD_REQUEST,
+    message: "You have entered wrong current password.",
+  },
+  [ErrorKind.newPasswordMustNotBeSame]: {
+    code: HttpStatusCodes.BAD_REQUEST,
+    message: "New password and old password cannot be the same.",
   },
 };
 
