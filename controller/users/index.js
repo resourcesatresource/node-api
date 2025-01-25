@@ -15,10 +15,22 @@ const getUserHandler = async (_, res) => {
   return res.json(users).end();
 };
 
-const getAdminsHandler = async (_, res) => {
+const getAdminsHandler = async (req, res) => {
+  const superUserEmail = config.get("config.project.superuser");
+
+  const { email } = req.user;
+
+  if (email !== superUserEmail) {
+    throwError(ErrorKind.unauthorizedNotSuperAdmin);
+  }
+
   const admins = await find(User, { isAdmin: true });
 
-  return res.json(admins ?? []);
+  const response = (admins ?? []).filter(
+    ({ email }) => email !== superUserEmail
+  );
+
+  return res.json(response);
 };
 
 const postUserHandler = async (req, res) => {

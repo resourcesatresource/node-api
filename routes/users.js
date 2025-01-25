@@ -41,7 +41,7 @@ router.post("/change-password", [auth], asyncWrapper(postResetPasswordHandler));
 router.post("/admin", auth, asyncWrapper(postAdminRequestHandler));
 
 router.post(
-  "/admin/:id",
+  "/admin/:id/grant",
   [auth, admin([AdminAccessLevel.superUser])],
   asyncWrapper(postAdminHandler)
 );

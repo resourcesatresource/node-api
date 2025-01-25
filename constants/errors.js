@@ -10,6 +10,7 @@ const ErrorKind = {
   unauthorized: "unauthorized",
   unauthorizedNotAdmin: "unauthorizedNotAdmin",
   unauthorizedNotProperAccess: "unauthorizedNotProperAccess",
+  unauthorizedNotSuperAdmin: "unauthorizedNotSuperAdmin",
   noRecordsFound: "noRecordsFound",
   notAllowedToDelete: "notAllowedToDelete",
   notAllowedToEdit: "notAllowedToEdit",
@@ -110,6 +111,10 @@ const ERROR_TYPE = {
   [ErrorKind.unauthorizedNotProperAccess]: {
     code: HttpStatusCodes.FORBIDDEN,
     message: "Unauthorized as you don't have proper access for this resource.",
+  },
+  [ErrorKind.unauthorizedNotSuperAdmin]: {
+    code: HttpStatusCodes.FORBIDDEN,
+    message: "Unauthorized as you don't have the super admin privileges",
   },
   [ErrorKind.invalidCurrentPassword]: {
     code: HttpStatusCodes.BAD_REQUEST,
