@@ -6,6 +6,10 @@
   "config": {
     "project": {
       "superuser": ""
+    },
+    "nodemailer": {
+      "email": "",
+      "password": ""
     }
   }
 }

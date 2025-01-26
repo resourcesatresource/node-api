@@ -7,6 +7,7 @@ const ErrorKind = {
   unableToDeleteData: "unableToDeleteData",
   unableToUpdateData: "unableToUpdateData",
   unableToCompleteRequest: "unableToCompleteRequest",
+  unableToSendResetLink: "unableToSendResetLink",
   unauthorized: "unauthorized",
   unauthorizedNotAdmin: "unauthorizedNotAdmin",
   unauthorizedNotProperAccess: "unauthorizedNotProperAccess",
@@ -24,6 +25,7 @@ const ErrorKind = {
   invalidPassword: "invalidPassword",
   invalidCurrentPassword: "invalidCurrentPassword",
   newPasswordMustNotBeSame: "newPasswordMustNotBeSame",
+  invalidCredentials: "invalidCredentials",
 };
 
 const ERROR_TYPE = {
@@ -104,6 +106,10 @@ const ERROR_TYPE = {
     code: HttpStatusCodes.UNAUTHORIZED,
     message: "Unauthorized!",
   },
+  [ErrorKind.unableToSendResetLink]: {
+    message: "Unable to send email at the moment, please try after sometime!",
+    code: HttpStatusCodes.SERVICE_UNAVAILABLE,
+  },
   [ErrorKind.unauthorizedNotAdmin]: {
     code: HttpStatusCodes.FORBIDDEN,
     message: "Unauthorized as you are not an admin.",
@@ -123,6 +129,10 @@ const ERROR_TYPE = {
   [ErrorKind.newPasswordMustNotBeSame]: {
     code: HttpStatusCodes.BAD_REQUEST,
     message: "New password and old password cannot be the same.",
+  },
+  [ErrorKind.invalidCredentials]: {
+    code: HttpStatusCodes.BAD_GATEWAY,
+    message: "Invalid credentials!",
   },
 };
 

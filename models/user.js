@@ -28,7 +28,9 @@ const userSchema = mongoose.Schema({
 });
 
 // adding token generation method
-userSchema.methods.generateAuthToken = function () {
+userSchema.methods.generateAuthToken = function (
+  options = { expiresIn: undefined }
+) {
   return jwt.sign(
     {
       _id: this._id,
@@ -36,7 +38,10 @@ userSchema.methods.generateAuthToken = function () {
       name: this.name,
       email: this.email,
     },
-    config.get("jwtprivatekey")
+    config.get("jwtprivatekey"),
+    {
+      ...(options?.expiresIn && { expiresIn: options.expiresIn }),
+    }
   );
 };
 
