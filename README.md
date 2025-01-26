@@ -1,5 +1,9 @@
 # node-api
 
+## [0.0.24-rc-2]
+
+- Added route for supporting reset password
+
 ## [0.0.24-rc-1]
 
 - Fixed authorization middleware using outdated config
