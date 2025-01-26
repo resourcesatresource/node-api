@@ -1,17 +1,19 @@
 const express = require("express");
 const { pick } = require("lodash");
 
-const { User, getByEmail } = require("../models/user");
+const { User, getByEmail, update: updateUser } = require("../models/user");
 const { validateInputFields } = require("../validators");
 const {
   postUserAuthenticationSchema,
   postUserPasswordResetRequestSchema,
+  postUserResetPasswordSchema,
 } = require("../validators/users");
 const { asyncWrapper } = require("../utils");
-const { compareHash } = require("../services/bcrypt");
+const { compareHash, generateHash } = require("../services/bcrypt");
 const { sendEmail } = require("../services/nodemailer");
 const { throwError } = require("../utils/errors");
 const { ErrorKind } = require("../constants/errors");
+const { getVerifiedAndDecodeTokenDetails } = require("../services/jwt");
 
 const RESET_EMAIL_DETAILS = {
   SUBJECT: "[Movies Genres]: Password Reset Request",
@@ -65,6 +67,35 @@ router.post(
       RESET_EMAIL_DETAILS.SUBJECT,
       RESET_EMAIL_DETAILS.TEXT.replace("{{resetToken}}", resetToken)
     );
+
+    return res.json({ status: "OK" }).end();
+  })
+);
+
+router.post(
+  "/reset-password",
+  asyncWrapper(async (req, res) => {
+    const { validationToken, newPassword } = req.body;
+
+    validateInputFields(postUserResetPasswordSchema, req.body);
+
+    const { email } = getVerifiedAndDecodeTokenDetails(validationToken);
+
+    const user = await getByEmail(email);
+
+    if (!user) {
+      throwError(ErrorKind.userWithEmailNotExists);
+    }
+
+    const hashedNewPassword = await generateHash(newPassword);
+
+    const updatedUser = await updateUser(email, {
+      password: hashedNewPassword,
+    });
+
+    if (!updatedUser) {
+      throwError(ErrorKind.unableToUpdateData);
+    }
 
     return res.json({ status: "OK" }).end();
   })
