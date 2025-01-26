@@ -6,6 +6,10 @@
   "config": {
     "project": {
       "superuser": "PROJECT_SUPER_USER"
+    },
+    "nodemailer": {
+      "email": "NODE_MAILER_EMAIL_USER",
+      "password": "NODE_MAILER_EMAIL_PASS"
     }
   }
 }

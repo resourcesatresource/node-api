@@ -3,6 +3,7 @@ const config = require("config");
 const cors = require("cors");
 
 const initDB = require("./startup/db");
+const initServices = require("./startup/services");
 const initRoute = require("./startup/routes");
 const initConfig = require("./startup/config");
 const initProductionSetup = require("./startup/prod");
@@ -13,6 +14,7 @@ app.use(cors());
 
 initConfig(); /* Validates if we have necessary configs in .env */
 initDB();
+initServices();
 initRoute(app);
 initProductionSetup(app);
 

@@ -7,6 +7,7 @@ const ErrorKind = {
   unableToDeleteData: "unableToDeleteData",
   unableToUpdateData: "unableToUpdateData",
   unableToCompleteRequest: "unableToCompleteRequest",
+  unableToSendResetLink: "unableToSendResetLink",
   unauthorized: "unauthorized",
   unauthorizedNotAdmin: "unauthorizedNotAdmin",
   unauthorizedNotProperAccess: "unauthorizedNotProperAccess",
@@ -103,6 +104,10 @@ const ERROR_TYPE = {
   [ErrorKind.unauthorized]: {
     code: HttpStatusCodes.UNAUTHORIZED,
     message: "Unauthorized!",
+  },
+  [ErrorKind.unableToSendResetLink]: {
+    message: "Unable to send email at the moment, please try after sometime!",
+    code: HttpStatusCodes.SERVICE_UNAVAILABLE,
   },
   [ErrorKind.unauthorizedNotAdmin]: {
     code: HttpStatusCodes.FORBIDDEN,

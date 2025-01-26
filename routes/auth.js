@@ -1,12 +1,22 @@
 const express = require("express");
 const { pick } = require("lodash");
 
-const { User } = require("../models/user");
+const { User, getByEmail } = require("../models/user");
 const { validateInputFields } = require("../validators");
-const { postUserAuthenticationSchema } = require("../validators/users");
+const {
+  postUserAuthenticationSchema,
+  postUserPasswordResetRequestSchema,
+} = require("../validators/users");
 const { asyncWrapper } = require("../utils");
 const { compareHash } = require("../services/bcrypt");
+const { sendEmail } = require("../services/nodemailer");
 const { throwError } = require("../utils/errors");
+const { ErrorKind } = require("../constants/errors");
+
+const RESET_EMAIL_DETAILS = {
+  SUBJECT: "[Movies Genres]: Password Reset Request",
+  TEXT: 'Click this link to reset your password for "Movies Genres" -\nhttps://movies-genres.netlify.app/reset-password?token={{resetToken}}\nThis link is only valid for 1 hour from now.\n\nTeam ASAP - Movies Genres',
+};
 
 const router = express.Router();
 
@@ -32,6 +42,31 @@ router.post(
     const response = pick(user, ["_id", "name", "email", "isAdmin"]);
 
     return res.json({ secureToken, user: response });
+  })
+);
+
+router.post(
+  "/request-reset-password",
+  asyncWrapper(async (req, res) => {
+    validateInputFields(postUserPasswordResetRequestSchema, req.body);
+
+    const { email } = req.body;
+
+    const user = await getByEmail(email);
+
+    if (!user) {
+      throwError(ErrorKind.userWithEmailNotExists);
+    }
+
+    const resetToken = user.generateAuthToken({ expireIn: "1h" });
+
+    await sendEmail(
+      email,
+      RESET_EMAIL_DETAILS.SUBJECT,
+      RESET_EMAIL_DETAILS.TEXT.replace("{{resetToken}}", resetToken)
+    );
+
+    return res.json({ status: "OK" }).end();
   })
 );
 
