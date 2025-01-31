@@ -60,7 +60,7 @@ router.post(
       throwError(ErrorKind.userWithEmailNotExists);
     }
 
-    const resetToken = user.generateAuthToken({ expireIn: "1h" });
+    const resetToken = user.generateAuthToken({ expiresIn: "1h" });
 
     await sendEmail(
       email,
