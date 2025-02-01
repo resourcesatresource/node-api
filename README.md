@@ -1,5 +1,10 @@
 # node-api
 
+## [0.0.24-rc-3]
+
+- Now the token will be expired in 1hr after its creation.
+- Now we log raw captured errors in the `dev` environment.
+
 ## [0.0.24-rc-2]
 
 - Added route for supporting reset password
