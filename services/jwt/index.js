@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 
 const { throwError } = require("../../utils/errors");
 const { ErrorKind } = require("../../constants/errors");
+const { log } = require("../../utils/logger");
 
 const getVerifiedAndDecodeTokenDetails = (token) => {
   try {
@@ -14,7 +15,7 @@ const getVerifiedAndDecodeTokenDetails = (token) => {
 
     return decodedCredentials;
   } catch (error) {
-    console.log(error);
+    log.error(error);
     throwError(ErrorKind.invalidCredentials);
   }
 };

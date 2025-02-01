@@ -3,6 +3,7 @@ const nodemailer = require("nodemailer");
 
 const { throwError } = require("../../utils/errors");
 const { ErrorKind } = require("../../constants/errors");
+const { log } = require("../../utils/logger");
 
 let nodemailerTransporter = null;
 
@@ -35,7 +36,7 @@ const sendEmail = async (to, subject, text) => {
 
     await nodemailerTransporter.sendMail(mailOptions);
   } catch (error) {
-    console.error(error);
+    log.error(error);
     throwError(ErrorKind.unableToSendResetLink);
   }
 };
