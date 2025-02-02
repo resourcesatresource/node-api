@@ -1,5 +1,10 @@
 # node-api
 
+## [0.0.24-rc-4]
+
+- Now the `auth` middleware can read token from request body.
+- New route to verify `accessToken`.
+
 ## [0.0.24-rc-3]
 
 - Now the token will be expired in 1hr after its creation.
