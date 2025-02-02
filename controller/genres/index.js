@@ -1,12 +1,33 @@
 const { ErrorKind } = require("../../constants/errors");
 const { Genre, deleteById, getById } = require("../../models/genre");
+const { getById: getUserById } = require("../../models/user");
 const { throwError } = require("../../utils/errors");
 const { validateInputFields, validateObjectId } = require("../../validators");
 const { postSchema } = require("../../validators/genres");
 
 const getGenresHandler = async (_, res) => {
   const response = await Genre.find();
-  return res.json(response);
+  const populatedGenreWithAuthorDetails = [];
+
+  for (const genre of response) {
+    if (genre?.author) {
+      const { name: authorName, email: authorEmail } = await getUserById(
+        genre?.author
+      );
+
+      populatedGenreWithAuthorDetails.push({
+        _id: genre._id,
+        name: genre?.name,
+        authorId: genre.author,
+        authorEmail,
+        authorName,
+      });
+    } else {
+      populatedGenreWithAuthorDetails.push(genre);
+    }
+  }
+
+  return res.json(populatedGenreWithAuthorDetails).end();
 };
 
 const getGenreHandler = async (req, res) => {

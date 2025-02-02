@@ -66,6 +66,10 @@ const getByEmail = (email) => {
   return User.findOne({ email });
 };
 
+const getById = (_id) => {
+  return User.findOne({ _id });
+};
+
 const update = (email, params, options) => {
   return User.findOneAndUpdate({ email }, params, {
     returnDocument: "after",
@@ -73,4 +77,4 @@ const update = (email, params, options) => {
   });
 };
 
-module.exports = { User, getByEmail, update };
+module.exports = { User, getByEmail, getById, update };
