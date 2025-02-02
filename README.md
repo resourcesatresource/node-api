@@ -1,5 +1,9 @@
 # node-api
 
+## [0.0.24-rc-5]
+
+- Genre listing route now returns author details.
+
 ## [0.0.24-rc-4]
 
 - Now the `auth` middleware can read token from request body.
