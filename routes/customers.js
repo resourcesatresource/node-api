@@ -14,14 +14,14 @@ const router = express.Router();
 
 router.get(
   "/",
-  [auth, admin([AdminAccessLevel.superUser])],
+  [auth(), admin([AdminAccessLevel.superUser])],
   asyncWrapper(getCustomersHandler)
 );
 
-router.post("/", auth, asyncWrapper(postCustomerHandler));
+router.post("/", auth(), asyncWrapper(postCustomerHandler));
 
 router.get("/:id", asyncWrapper(getCustomerDetailsHandler));
 
-router.patch("/connections", auth, asyncWrapper(patchConnectionHandler));
+router.patch("/connections", auth(), asyncWrapper(patchConnectionHandler));
 
 module.exports = router;

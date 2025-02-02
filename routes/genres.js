@@ -16,10 +16,10 @@ router.get("/", asyncWrapper(getGenresHandler));
 
 router.get("/:id", asyncWrapper(getGenreHandler));
 
-router.post("/", auth, asyncWrapper(postGenresHandler));
+router.post("/", auth(), asyncWrapper(postGenresHandler));
 
-router.put("/:id", auth, asyncWrapper(putGenreHandler));
+router.put("/:id", auth(), asyncWrapper(putGenreHandler));
 
-router.delete("/:id", [auth], asyncWrapper(deleteGenresHandler));
+router.delete("/:id", [auth()], asyncWrapper(deleteGenresHandler));
 
 module.exports = router;

@@ -19,7 +19,7 @@ const router = express.Router();
 
 router.get(
   "/",
-  [auth, admin([AdminAccessLevel.superUser])],
+  [auth(), admin([AdminAccessLevel.superUser])],
   asyncWrapper(getUserHandler)
 );
 
@@ -27,28 +27,32 @@ router.post("/", asyncWrapper(postUserHandler));
 
 router.get(
   "/admins",
-  [auth, admin([AdminAccessLevel.superUser])],
+  [auth(), admin([AdminAccessLevel.superUser])],
   asyncWrapper(getAdminsHandler)
 );
 
 router.get(
   "/admin/requests/",
-  [auth, admin([AdminAccessLevel.superUser])],
+  [auth(), admin([AdminAccessLevel.superUser])],
   asyncWrapper(getAdminRequestsHandler)
 );
-router.post("/change-password", [auth], asyncWrapper(postResetPasswordHandler));
+router.post(
+  "/change-password",
+  [auth()],
+  asyncWrapper(postResetPasswordHandler)
+);
 
-router.post("/admin", auth, asyncWrapper(postAdminRequestHandler));
+router.post("/admin", auth(), asyncWrapper(postAdminRequestHandler));
 
 router.post(
   "/admin/:id/grant",
-  [auth, admin([AdminAccessLevel.superUser])],
+  [auth(), admin([AdminAccessLevel.superUser])],
   asyncWrapper(postAdminHandler)
 );
 
 router.post(
   "/admin/:id/revoke",
-  [auth, admin([AdminAccessLevel.superUser])],
+  [auth(), admin([AdminAccessLevel.superUser])],
   asyncWrapper(postAdminRevokeHandler)
 );
 

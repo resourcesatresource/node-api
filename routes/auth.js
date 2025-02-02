@@ -14,6 +14,9 @@ const { sendEmail } = require("../services/nodemailer");
 const { throwError } = require("../utils/errors");
 const { ErrorKind } = require("../constants/errors");
 const { getVerifiedAndDecodeTokenDetails } = require("../services/jwt");
+const { postVerifyAuthTokenHandler } = require("../controller/authentications");
+const { auth } = require("../middleware");
+const { CUSTOM_RESPONSE_STATUS } = require("../constants");
 
 const RESET_EMAIL_DETAILS = {
   SUBJECT: "[Movies Genres]: Password Reset Request",
@@ -68,7 +71,7 @@ router.post(
       RESET_EMAIL_DETAILS.TEXT.replace("{{resetToken}}", resetToken)
     );
 
-    return res.json({ status: "OK" }).end();
+    return res.json({ status: CUSTOM_RESPONSE_STATUS.OK }).end();
   })
 );
 
@@ -97,8 +100,14 @@ router.post(
       throwError(ErrorKind.unableToUpdateData);
     }
 
-    return res.json({ status: "OK" }).end();
+    return res.json({ status: CUSTOM_RESPONSE_STATUS.OK }).end();
   })
+);
+
+router.post(
+  "/verify-token",
+  auth({ viaBody: true }),
+  asyncWrapper(postVerifyAuthTokenHandler)
 );
 
 module.exports = router;

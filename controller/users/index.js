@@ -9,6 +9,7 @@ const { throwError } = require("../../utils/errors");
 const { create, find } = require("../../helpers/tables");
 const { postUserSchema } = require("../../validators/users");
 const { ErrorKind } = require("../../constants/errors");
+const { CUSTOM_RESPONSE_STATUS } = require("../../constants");
 
 const getUserHandler = async (_, res) => {
   const users = await find(User);
@@ -100,7 +101,7 @@ const postResetPasswordHandler = async (req, res) => {
     throwError(ErrorKind.unableToUpdateData);
   }
 
-  return res.json({ status: "OK" }).end();
+  return res.json({ status: CUSTOM_RESPONSE_STATUS.OK }).end();
 };
 
 const postAdminRequestHandler = async (req, res) => {
