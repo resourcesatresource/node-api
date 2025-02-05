@@ -29,7 +29,14 @@ workflows:
   version: 2
   deploy_on_tag:
     jobs:
-      - install_dependencies
+      - install_dependencies:
+        filters:
+          tags:
+            only:
+              - '/^v\.\d\.\d{3}\.\d{3}$/'
+              - '/^v\.\d\.\d{3}\.\d{3}-rc-\d{2}$/'
+          branches:
+            ignore: /.*/
       - deploy_to_render:
           requires:
             - install_dependencies
