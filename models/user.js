@@ -19,6 +19,12 @@ const userSchema = mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  reset_token: {
+    expires_at: {
+      type: String,
+      required: false,
+    },
+  },
   requests: [
     {
       requesterEmailId: { type: String, required: true },

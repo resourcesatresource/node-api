@@ -17,6 +17,9 @@ const { getVerifiedAndDecodeTokenDetails } = require("../services/jwt");
 const { postVerifyAuthTokenHandler } = require("../controller/authentications");
 const { auth } = require("../middleware");
 const { CUSTOM_RESPONSE_STATUS } = require("../constants");
+const {
+  isResetTokenExpired,
+} = require("../controller/authentications/helpers");
 
 const RESET_EMAIL_DETAILS = {
   SUBJECT: "[Movies Genres]: Password Reset Request",
@@ -63,6 +66,12 @@ router.post(
       throwError(ErrorKind.userWithEmailNotExists);
     }
 
+    if (user?.reset_token?.expires_at) {
+      if (!isResetTokenExpired(user?.reset_token?.expires_at)) {
+        throwError(ErrorKind.resetTokenAlreadyExists);
+      }
+    }
+
     const resetToken = user.generateAuthToken({ expiresIn: "1h" });
 
     await sendEmail(
@@ -71,7 +80,20 @@ router.post(
       RESET_EMAIL_DETAILS.TEXT.replace("{{resetToken}}", resetToken)
     );
 
-    return res.json({ status: CUSTOM_RESPONSE_STATUS.OK }).end();
+    const newTokenExpiresAt = new Date();
+    newTokenExpiresAt.setTime(newTokenExpiresAt.getTime() + 60 * 60 * 1000);
+
+    await updateUser(email, {
+      reset_token: {
+        expires_at: newTokenExpiresAt,
+      },
+    });
+
+    return res
+      .json({
+        status: CUSTOM_RESPONSE_STATUS.OK,
+      })
+      .end();
   })
 );
 

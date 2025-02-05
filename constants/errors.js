@@ -16,6 +16,7 @@ const ErrorKind = {
   notAllowedToDelete: "notAllowedToDelete",
   notAllowedToEdit: "notAllowedToEdit",
   recordAlreadyExists: "recordAlreadyExists",
+  resetTokenAlreadyExists: "resetTokenAlreadyExists",
   userAlreadyExists: "userAlreadyExists",
   userAlreadyAdmin: "userAlreadyAdmin",
   userAlreadyRequestedForAdmin: "userAlreadyRequestedForAdmin",
@@ -72,6 +73,10 @@ const ERROR_TYPE = {
   [ErrorKind.recordAlreadyExists]: {
     code: HttpStatusCodes.INTERNAL_SERVER_ERROR,
     message: "Record already exists.",
+  },
+  [ErrorKind.resetTokenAlreadyExists]: {
+    code: HttpStatusCodes.BAD_REQUEST,
+    message: "Token is already sent, please check you mail inbox.",
   },
   [ErrorKind.userAlreadyExists]: {
     code: HttpStatusCodes.BAD_REQUEST,
