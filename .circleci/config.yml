@@ -14,13 +14,6 @@ jobs:
       - run:
           name: Install dependencies
           command: npm install
-    filters:
-      tags:
-        only:
-          - '^v\.\d\.\d{3}\.\d{3}$'
-          - '^v\.\d\.\d{3}\.\d{3}-rc-\d{2}$'
-      branches:
-        ignore: /.*/
 
   deploy_to_render:
     executor: node-executor
@@ -31,19 +24,26 @@ jobs:
           command: |
             echo "Deploying to Render..."
             curl -X POST ${RENDER_DEPLOY_HOOK}
-    filters:
-      tags:
-        only:
-          - '^v\.\d\.\d{3}\.\d{3}$'
-          - '^v\.\d\.\d{3}\.\d{3}-rc-\d{2}$'
-      branches:
-        ignore: /.*/
 
 workflows:
   version: 2
   deploy_on_tag:
     jobs:
-      - install_dependencies
+      - install_dependencies:
+          filters:
+            tags:
+              only:
+                - '^v\.\d\.\d{3}\.\d{3}$'
+                - '^v\.\d\.\d{3}\.\d{3}-rc-\d{2}$'
+            branches:
+              ignore: /.*/
       - deploy_to_render:
           requires:
             - install_dependencies
+          filters:
+            tags:
+              only:
+                - '^v\.\d\.\d{3}\.\d{3}$'
+                - '^v\.\d\.\d{3}\.\d{3}-rc-\d{2}$'
+            branches:
+              ignore: /.*/
