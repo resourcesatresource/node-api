@@ -16,7 +16,7 @@ const { ErrorKind } = require("../constants/errors");
 const { getVerifiedAndDecodeTokenDetails } = require("../services/jwt");
 const { postVerifyAuthTokenHandler } = require("../controller/authentications");
 const { auth } = require("../middleware");
-const { CUSTOM_RESPONSE_STATUS } = require("../constants");
+const { CUSTOM_RESPONSE_STATUS, TIME_FACTOR } = require("../constants");
 const {
   isResetTokenExpired,
 } = require("../controller/authentications/helpers");
@@ -81,7 +81,12 @@ router.post(
     );
 
     const newTokenExpiresAt = new Date();
-    newTokenExpiresAt.setTime(newTokenExpiresAt.getTime() + 60 * 60 * 1000);
+    newTokenExpiresAt.setTime(
+      newTokenExpiresAt.getTime() +
+        TIME_FACTOR.MINUTES_IN_AN_HOUR *
+          TIME_FACTOR.SECONDS_IN_AN_HOUR *
+          TIME_FACTOR.MILLISECONDS_IN_A_SECOND
+    );
 
     await updateUser(email, {
       reset_token: {
