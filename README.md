@@ -1,5 +1,9 @@
 # node-api
 
+## [0.0.24-rc-6]
+
+- Restrict user from making excessive reset password request.
+
 ## [0.0.24-rc-5]
 
 - Genre listing route now returns author details.
