@@ -102,7 +102,7 @@ const putGenreHandler = async (req, res) => {
     throwError(ErrorKind.noRecordsFound);
   }
 
-  if (genre.author?.toString() !== userId) {
+  if (genre.author?.toString() !== userId.toString()) {
     throwError(ErrorKind.notAllowedToEdit);
   }
 
