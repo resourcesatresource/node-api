@@ -76,7 +76,7 @@ const deleteGenresHandler = async (req, res) => {
   }
 
   if (!isAdmin) {
-    if (userId !== genre?.author?.toString()) {
+    if (userId.toString() !== genre?.author?.toString()) {
       throwError(ErrorKind.notAllowedToDelete);
     }
   }
