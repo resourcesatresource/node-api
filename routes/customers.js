@@ -6,6 +6,7 @@ const {
   getCustomersHandler,
   getCustomerDetailsHandler,
   postCustomerHandler,
+  deleteConnectionHandler,
 } = require("../controller/customers");
 const { asyncWrapper } = require("../utils");
 const { AdminAccessLevel } = require("../constants/enum");
@@ -23,5 +24,7 @@ router.post("/", auth(), asyncWrapper(postCustomerHandler));
 router.get("/:id", asyncWrapper(getCustomerDetailsHandler));
 
 router.patch("/connections", auth(), asyncWrapper(patchConnectionHandler));
+
+router.delete("/connections/:id", auth(), asyncWrapper(deleteConnectionHandler))
 
 module.exports = router;

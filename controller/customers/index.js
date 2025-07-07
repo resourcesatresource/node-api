@@ -1,12 +1,13 @@
 const { isEmpty } = require("lodash");
 
-const { update, find, create } = require("../../helpers/tables");
+const { update, find, create, findOne } = require("../../helpers/tables");
 const { Customer } = require("../../models/customer");
 const { constructObjectId } = require("../../utils/db");
 const { patchConnectionSchema } = require("../../validators/customers");
 const { validateInputFields, validateObjectId } = require("../../validators/");
 const { throwError } = require("../../utils/errors");
 const { ErrorKind } = require("../../constants/errors");
+const { checkIfConnectionExists } = require("./helpers");
 
 const getCustomersHandler = async (_, res) => {
   const user = await find(Customer);
@@ -73,9 +74,45 @@ const patchConnectionHandler = async (req, res) => {
   return res.json(response).end();
 };
 
+const deleteConnectionHandler = async (req, res) => {
+  const id = req.params.id;
+  const { _id: userId } = req.user;
+
+  validateObjectId(id);
+
+  const customerDetails = await findOne(Customer, {
+    userId,
+  });
+
+  if (
+    isEmpty(customerDetails) || !checkIfConnectionExists(id, customerDetails)
+  ) {
+    throwError(ErrorKind.noRecordsFound);
+  }
+
+  const response = await update(
+    Customer,
+    {
+      userId,
+    },
+    {
+      $pull: {
+        connections: { _id: constructObjectId(id) },
+      },
+    }
+  );
+
+  if (isEmpty(response)) {
+    throwError(ErrorKind.unableToDeleteData);
+  }
+
+  return res.json(response).end();
+};
+
 module.exports = {
   getCustomerDetailsHandler,
   getCustomersHandler,
   patchConnectionHandler,
   postCustomerHandler,
+  deleteConnectionHandler,
 };
