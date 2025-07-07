@@ -1,5 +1,11 @@
 # node-api
 
+## [0.0.26]
+
+- [Feature]: Add route for deleting customer's connection. (#17)
+
+- [Added-#15]: Route for health check (#16)
+
 ## [0.0.24-rc-6]
 
 - Restrict user from making excessive reset password request.
