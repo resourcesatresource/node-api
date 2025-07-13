@@ -17,6 +17,7 @@ const ErrorKind = {
   notAllowedToEdit: "notAllowedToEdit",
   recordAlreadyExists: "recordAlreadyExists",
   resetTokenAlreadyExists: "resetTokenAlreadyExists",
+  resetTokenAlreadyUsed: "resetTokenAlreadyUsed",
   userAlreadyExists: "userAlreadyExists",
   userAlreadyAdmin: "userAlreadyAdmin",
   userAlreadyRequestedForAdmin: "userAlreadyRequestedForAdmin",
@@ -77,6 +78,10 @@ const ERROR_TYPE = {
   [ErrorKind.resetTokenAlreadyExists]: {
     code: HttpStatusCodes.BAD_REQUEST,
     message: "Token is already sent, please check you mail inbox.",
+  },
+  [ErrorKind.resetTokenAlreadyUsed]: {
+    code: HttpStatusCodes.BAD_REQUEST,
+    message: "Token is already used, please request a new reset link.",
   },
   [ErrorKind.userAlreadyExists]: {
     code: HttpStatusCodes.BAD_REQUEST,

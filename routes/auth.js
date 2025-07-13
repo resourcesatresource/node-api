@@ -105,9 +105,9 @@ router.post(
 router.post(
   "/reset-password",
   asyncWrapper(async (req, res) => {
-    const { validationToken, newPassword } = req.body;
-
     validateInputFields(postUserResetPasswordSchema, req.body);
+
+    const { validationToken, newPassword } = req.body;
 
     const { email } = getVerifiedAndDecodeTokenDetails(validationToken);
 
@@ -117,10 +117,17 @@ router.post(
       throwError(ErrorKind.userWithEmailNotExists);
     }
 
+    if (!user?.reset_token?.expires_at) {
+      throwError(ErrorKind.resetTokenAlreadyUsed);
+    }
+
     const hashedNewPassword = await generateHash(newPassword);
 
     const updatedUser = await updateUser(email, {
       password: hashedNewPassword,
+      reset_token: {
+        expires_at: null,
+      },
     });
 
     if (!updatedUser) {
