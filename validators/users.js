@@ -15,6 +15,10 @@ const postUserSchema = Joi.object({
   password: Joi.string().trim().min(5).required(),
 });
 
+const postUsernameSchema = Joi.object({
+  username: Joi.string().trim().required(),
+});
+
 const postUserPasswordResetRequestSchema = Joi.object({
   email: Joi.string().email().trim().required(),
 });
@@ -28,6 +32,7 @@ module.exports = {
   postAdminRequestSchema,
   postUserAuthenticationSchema,
   postUserSchema,
+  postUsernameSchema,
   postUserPasswordResetRequestSchema,
   postUserResetPasswordSchema,
 };

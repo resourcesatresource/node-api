@@ -1,13 +1,21 @@
 const config = require("config");
 const { isEmpty, pick } = require("lodash");
 
-const { getByEmail, update, User } = require("../../models/user");
+const {
+  getByEmail,
+  update,
+  User,
+  getByUsername,
+} = require("../../models/user");
 const { checkIfAlreadyRequested } = require("./helpers");
 const { validateInputFields } = require("../../validators");
 const { compareHash, generateHash } = require("../../services/bcrypt");
 const { throwError } = require("../../utils/errors");
 const { create, find } = require("../../helpers/tables");
-const { postUserSchema } = require("../../validators/users");
+const {
+  postUserSchema,
+  postUsernameSchema,
+} = require("../../validators/users");
 const { ErrorKind } = require("../../constants/errors");
 const { CUSTOM_RESPONSE_STATUS } = require("../../constants");
 
@@ -200,14 +208,39 @@ const postAdminRevokeHandler = async (req, res) => {
   }
 
   user.isAdmin = false;
-  user.save();
+  await user.save();
 
   return res.json({ status: true }).end();
+};
+
+const postUsernameHandler = async (req, res) => {
+  validateInputFields(postUsernameSchema, req.body);
+
+  const { username } = req.body;
+  const { email } = req.user;
+
+  const isUsernameExists = await getByUsername(username);
+
+  if (isUsernameExists) {
+    throwError(ErrorKind.usernameAlreadyTaken);
+  }
+
+  const user = await getByEmail(email);
+
+  if (!user) {
+    throwError(ErrorKind.userWithEmailNotExists);
+  }
+
+  user.username = username;
+  await user.save();
+
+  return res.json({ message: "Success" });
 };
 
 module.exports = {
   getUserHandler,
   postUserHandler,
+  postUsernameHandler,
   postResetPasswordHandler,
   getAdminsHandler,
   postAdminHandler,
