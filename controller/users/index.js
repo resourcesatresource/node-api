@@ -14,7 +14,7 @@ const { throwError } = require("../../utils/errors");
 const { create, find } = require("../../helpers/tables");
 const {
   postUserSchema,
-  postUsernameSchema,
+  patchUserProfileSchema,
 } = require("../../validators/users");
 const { ErrorKind } = require("../../constants/errors");
 const { CUSTOM_RESPONSE_STATUS } = require("../../constants");
@@ -210,19 +210,21 @@ const postAdminRevokeHandler = async (req, res) => {
   user.isAdmin = false;
   await user.save();
 
-  return res.json({ status: true }).end();
+  return res.json({ status: CUSTOM_RESPONSE_STATUS.OK }).end();
 };
 
-const postUsernameHandler = async (req, res) => {
-  validateInputFields(postUsernameSchema, req.body);
+const patchUserProfileHandler = async (req, res) => {
+  validateInputFields(patchUserProfileSchema, req.body);
 
-  const { username } = req.body;
+  const { name, username } = req.body;
   const { email } = req.user;
 
-  const isUsernameExists = await getByUsername(username);
+  if (username) {
+    const isUsernameExists = await getByUsername(username);
 
-  if (isUsernameExists) {
-    throwError(ErrorKind.usernameAlreadyTaken);
+    if (isUsernameExists) {
+      throwError(ErrorKind.usernameAlreadyTaken);
+    }
   }
 
   const user = await getByEmail(email);
@@ -231,16 +233,23 @@ const postUsernameHandler = async (req, res) => {
     throwError(ErrorKind.userWithEmailNotExists);
   }
 
-  user.username = username;
+  if (name) {
+    user.name = name;
+  }
+
+  if (username) {
+    user.username = username;
+  }
+
   await user.save();
 
-  return res.json({ message: "Success" });
+  return res.json({ status: CUSTOM_RESPONSE_STATUS.OK }).end();
 };
 
 module.exports = {
   getUserHandler,
   postUserHandler,
-  postUsernameHandler,
+  patchUserProfileHandler,
   postResetPasswordHandler,
   getAdminsHandler,
   postAdminHandler,
