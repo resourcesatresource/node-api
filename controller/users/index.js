@@ -222,22 +222,18 @@ const patchUserProfileHandler = async (req, res) => {
   if (username) {
     const isUsernameExists = await getByUsername(username);
 
-    if (isUsernameExists) {
+    if (isUsernameExists && isUsernameExists.email !== email) {
       throwError(ErrorKind.usernameAlreadyTaken);
     }
   }
 
   const user = await getByEmail(email);
 
-  if (!user) {
-    throwError(ErrorKind.userWithEmailNotExists);
-  }
-
-  if (name) {
+  if (name && name !== user.name) {
     user.name = name;
   }
 
-  if (username) {
+  if (username && username !== user.username) {
     user.username = username;
   }
 
