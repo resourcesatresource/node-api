@@ -11,6 +11,7 @@ const {
   getAdminRequestsHandler,
   postAdminRevokeHandler,
   getAdminsHandler,
+  patchUserProfileHandler,
 } = require("../controller/users");
 const { asyncWrapper } = require("../utils");
 const { AdminAccessLevel } = require("../constants/enum");
@@ -25,6 +26,8 @@ router.get(
 
 router.post("/", asyncWrapper(postUserHandler));
 
+router.patch("/me", auth(), asyncWrapper(patchUserProfileHandler));
+
 router.get(
   "/admins",
   [auth(), admin([AdminAccessLevel.superUser])],
@@ -36,6 +39,7 @@ router.get(
   [auth(), admin([AdminAccessLevel.superUser])],
   asyncWrapper(getAdminRequestsHandler)
 );
+
 router.post(
   "/change-password",
   [auth()],

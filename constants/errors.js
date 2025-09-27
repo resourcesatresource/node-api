@@ -24,6 +24,7 @@ const ErrorKind = {
   userWithEmailNotExists: "userWithEmailNotExists",
   userNotInRequestersList: "userNotInRequestersList",
   userNotAdmin: "userNotAdmin",
+  usernameAlreadyTaken: "usernameAlreadyTaken",
   invalidPassword: "invalidPassword",
   invalidCurrentPassword: "invalidCurrentPassword",
   newPasswordMustNotBeSame: "newPasswordMustNotBeSame",
@@ -107,6 +108,10 @@ const ERROR_TYPE = {
   [ErrorKind.userNotAdmin]: {
     code: HttpStatusCodes.BAD_REQUEST,
     message: "User was not an admin.",
+  },
+  [ErrorKind.usernameAlreadyTaken]: {
+    code: HttpStatusCodes.BAD_REQUEST,
+    message: "Username is already taken.",
   },
   [ErrorKind.invalidPassword]: {
     code: HttpStatusCodes.BAD_REQUEST,

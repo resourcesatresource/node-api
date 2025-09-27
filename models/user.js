@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const config = require("config");
+
 const { Customer } = require("./customer");
 
 const userSchema = mongoose.Schema({
@@ -10,6 +11,13 @@ const userSchema = mongoose.Schema({
   email: {
     type: String,
     unique: true,
+  },
+  username: {
+    type: String,
+    unique: true,
+    sparse: true,
+    lowercase: true,
+    trim: true,
   },
   password: {
     type: String,
@@ -76,6 +84,10 @@ const getById = (_id) => {
   return User.findOne({ _id });
 };
 
+const getByUsername = (username) => {
+  return User.findOne({ username });
+};
+
 const update = (email, params, options) => {
   return User.findOneAndUpdate({ email }, params, {
     returnDocument: "after",
@@ -83,4 +95,4 @@ const update = (email, params, options) => {
   });
 };
 
-module.exports = { User, getByEmail, getById, update };
+module.exports = { User, getByEmail, getById, getByUsername, update };

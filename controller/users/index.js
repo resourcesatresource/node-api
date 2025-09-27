@@ -1,13 +1,21 @@
 const config = require("config");
 const { isEmpty, pick } = require("lodash");
 
-const { getByEmail, update, User } = require("../../models/user");
+const {
+  getByEmail,
+  update,
+  User,
+  getByUsername,
+} = require("../../models/user");
 const { checkIfAlreadyRequested } = require("./helpers");
 const { validateInputFields } = require("../../validators");
 const { compareHash, generateHash } = require("../../services/bcrypt");
 const { throwError } = require("../../utils/errors");
 const { create, find } = require("../../helpers/tables");
-const { postUserSchema } = require("../../validators/users");
+const {
+  postUserSchema,
+  patchUserProfileSchema,
+} = require("../../validators/users");
 const { ErrorKind } = require("../../constants/errors");
 const { CUSTOM_RESPONSE_STATUS } = require("../../constants");
 
@@ -200,14 +208,44 @@ const postAdminRevokeHandler = async (req, res) => {
   }
 
   user.isAdmin = false;
-  user.save();
+  await user.save();
 
-  return res.json({ status: true }).end();
+  return res.json({ status: CUSTOM_RESPONSE_STATUS.OK }).end();
+};
+
+const patchUserProfileHandler = async (req, res) => {
+  validateInputFields(patchUserProfileSchema, req.body);
+
+  const { name, username } = req.body;
+  const { email } = req.user;
+
+  if (username) {
+    const isUsernameExists = await getByUsername(username);
+
+    if (isUsernameExists && isUsernameExists.email !== email) {
+      throwError(ErrorKind.usernameAlreadyTaken);
+    }
+  }
+
+  const user = await getByEmail(email);
+
+  if (name && name !== user.name) {
+    user.name = name;
+  }
+
+  if (username && username !== user.username) {
+    user.username = username;
+  }
+
+  await user.save();
+
+  return res.json({ status: CUSTOM_RESPONSE_STATUS.OK }).end();
 };
 
 module.exports = {
   getUserHandler,
   postUserHandler,
+  patchUserProfileHandler,
   postResetPasswordHandler,
   getAdminsHandler,
   postAdminHandler,

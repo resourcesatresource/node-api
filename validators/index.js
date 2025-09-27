@@ -4,10 +4,14 @@ const { throwError } = require("../utils/errors");
 const { ErrorKind } = require("../constants/errors");
 
 const validateInputFields = (schema, input) => {
-  const { error } = schema.validate(input);
+  try {
+    const { error } = schema.validate(input);
 
-  if (error) {
-    throw Error(error?.details?.[0]?.message);
+    if (error) {
+      throw Error(error?.details?.[0]?.message);
+    }
+  } catch (error) {
+    throwError(ErrorKind.badRequest, error.message);
   }
 };
 
