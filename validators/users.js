@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const { TRIM_REGEX } = require("../constants");
 
 const postUserAuthenticationSchema = Joi.object({
   email: Joi.string().email().trim().required(),
@@ -16,8 +17,8 @@ const postUserSchema = Joi.object({
 });
 
 const patchUserProfileSchema = Joi.object({
-  name: Joi.string().trim().optional(),
-  username: Joi.string().trim().optional(),
+  name: Joi.string().regex(TRIM_REGEX).optional(),
+  username: Joi.string().regex(TRIM_REGEX).optional(),
 });
 
 const postUserPasswordResetRequestSchema = Joi.object({

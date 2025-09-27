@@ -15,9 +15,12 @@ const ENVIRONMENT = {
 
 const MAX_ENCRYPTION_ROUND = 10;
 
+const TRIM_REGEX = /^\S.*\S$|^\S$/;
+
 module.exports = {
   CUSTOM_RESPONSE_STATUS,
   ENVIRONMENT,
   MAX_ENCRYPTION_ROUND,
   TIME_FACTOR,
+  TRIM_REGEX,
 };
