@@ -17,9 +17,15 @@ const MAX_ENCRYPTION_ROUND = 10;
 
 const TRIM_REGEX = /^\S.*\S$|^\S$/;
 
+const GET_GENRES_DEFAULT = {
+  page: 1,
+  limit: 25,
+};
+
 module.exports = {
   CUSTOM_RESPONSE_STATUS,
   ENVIRONMENT,
+  GET_GENRES_DEFAULT,
   MAX_ENCRYPTION_ROUND,
   TIME_FACTOR,
   TRIM_REGEX,

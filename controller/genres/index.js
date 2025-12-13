@@ -1,21 +1,33 @@
+const { GET_GENRES_DEFAULT } = require("../../constants");
 const { ErrorKind } = require("../../constants/errors");
 const { Genre, deleteById, getById } = require("../../models/genre");
 const { getById: getUserById } = require("../../models/user");
 const { throwError } = require("../../utils/errors");
 const { validateInputFields, validateObjectId } = require("../../validators");
-const { postSchema } = require("../../validators/genres");
+const { postSchema, getSchema } = require("../../validators/genres");
 
-const getGenresHandler = async (_, res) => {
-  const response = await Genre.find();
-  const populatedGenreWithAuthorDetails = [];
+const getGenresHandler = async (req, res) => {
+  validateInputFields(getSchema, req.body);
 
-  for (const genre of response) {
+  const page = req.body?.page || GET_GENRES_DEFAULT.page;
+  const limit = req.body?.limit || GET_GENRES_DEFAULT.limit;
+
+  const skip = (page - 1) * limit;
+
+  const [genres, genresTotalCount] = await Promise.all([
+    Genre.find().skip(skip).limit(limit),
+    Genre.countDocuments(),
+  ]);
+
+  const populatedGenresWithAuthorDetails = [];
+
+  for (const genre of genres) {
     if (genre?.author) {
       const { name: authorName, email: authorEmail } = await getUserById(
         genre?.author
       );
 
-      populatedGenreWithAuthorDetails.push({
+      populatedGenresWithAuthorDetails.push({
         _id: genre._id,
         name: genre?.name,
         authorId: genre.author,
@@ -23,11 +35,21 @@ const getGenresHandler = async (_, res) => {
         authorName,
       });
     } else {
-      populatedGenreWithAuthorDetails.push(genre);
+      populatedGenresWithAuthorDetails.push(genre);
     }
   }
 
-  return res.json(populatedGenreWithAuthorDetails).end();
+  return res
+    .json({
+      genres: populatedGenresWithAuthorDetails,
+      pagination: {
+        currentPage: page,
+        pageLimit: limit,
+        totalRecords: genresTotalCount,
+        totalPages: Math.ceil(genresTotalCount / limit),
+      },
+    })
+    .end();
 };
 
 const getGenreHandler = async (req, res) => {
