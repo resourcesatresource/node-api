@@ -34,6 +34,11 @@ const customerSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
+      iconName: {
+        type: String,
+        required: false,
+        default: "",
+      },
       createdAt: {
         type: Date,
         default: Date.now,

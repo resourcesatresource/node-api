@@ -3,11 +3,15 @@ const { isEmpty } = require("lodash");
 const { update, find, create, findOne } = require("../../helpers/tables");
 const { Customer } = require("../../models/customer");
 const { constructObjectId } = require("../../utils/db");
-const { patchConnectionSchema } = require("../../validators/customers");
+const {
+  patchConnectionSchema,
+  patchEditConnectionSchema,
+} = require("../../validators/customers");
 const { validateInputFields, validateObjectId } = require("../../validators/");
 const { throwError } = require("../../utils/errors");
 const { ErrorKind } = require("../../constants/errors");
 const { checkIfConnectionExists } = require("./helpers");
+const { User } = require("../../models/user");
 
 const getCustomersHandler = async (_, res) => {
   const user = await find(Customer);
@@ -22,11 +26,23 @@ const getCustomersHandler = async (_, res) => {
 const getCustomerDetailsHandler = async (req, res) => {
   const { id } = req.params;
 
-  validateObjectId(id);
+  const isObjectIdValid = validateObjectId(id, false);
 
-  const userId = constructObjectId(id);
+  const searchPayload = {};
 
-  const user = await find(Customer, { userId });
+  // If the id is a valid ObjectId, we will search by userId field, else we will search by username field.
+  if (!isObjectIdValid) {
+    const user = await findOne(User, { username: id });
+    if (isEmpty(user)) {
+      throwError(ErrorKind.noRecordsFound);
+    }
+
+    searchPayload.userId = user._id;
+  } else {
+    searchPayload.userId = constructObjectId(id);
+  }
+
+  const user = await find(Customer, searchPayload);
 
   if (isEmpty(user)) {
     throwError(ErrorKind.unableToAccessData);
@@ -57,14 +73,14 @@ const patchConnectionHandler = async (req, res) => {
 
   const { _id: userId } = req.user;
 
-  const { name, description = "", url } = req.body;
+  const { name, description = "", url, iconName = "" } = req.body;
 
   const response = await update(
     Customer,
     { userId },
     {
-      $addToSet: { connections: { name, description, url } },
-    }
+      $addToSet: { connections: { name, description, url, iconName } },
+    },
   );
 
   if (isEmpty(response)) {
@@ -85,7 +101,8 @@ const deleteConnectionHandler = async (req, res) => {
   });
 
   if (
-    isEmpty(customerDetails) || !checkIfConnectionExists(id, customerDetails)
+    isEmpty(customerDetails) ||
+    !checkIfConnectionExists(id, customerDetails)
   ) {
     throwError(ErrorKind.noRecordsFound);
   }
@@ -99,11 +116,46 @@ const deleteConnectionHandler = async (req, res) => {
       $pull: {
         connections: { _id: constructObjectId(id) },
       },
-    }
+    },
   );
 
   if (isEmpty(response)) {
     throwError(ErrorKind.unableToDeleteData);
+  }
+
+  return res.json(response).end();
+};
+
+const patchEditConnectionHandler = async (req, res) => {
+  const id = req.params.id;
+
+  validateObjectId(id);
+
+  validateInputFields(patchEditConnectionSchema, req.body, res);
+
+  const { _id: userId } = req.user;
+
+  const { name, description = "", url, iconName = "" } = req.body;
+
+  const response = await update(
+    Customer,
+    {
+      userId,
+      "connections._id": constructObjectId(id),
+    },
+    {
+      $set: {
+        "connections.$.name": name,
+        "connections.$.description": description,
+        "connections.$.url": url,
+        "connections.$.iconName": iconName,
+        "connections.$.updatedAt": new Date(),
+      },
+    },
+  );
+
+  if (isEmpty(response)) {
+    throwError(ErrorKind.unableToUpdateData);
   }
 
   return res.json(response).end();
@@ -115,4 +167,5 @@ module.exports = {
   patchConnectionHandler,
   postCustomerHandler,
   deleteConnectionHandler,
+  patchEditConnectionHandler,
 };

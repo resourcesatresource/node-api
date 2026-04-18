@@ -15,10 +15,10 @@ const validateInputFields = (schema, input) => {
   }
 };
 
-const validateObjectId = (id) => {
+const validateObjectId = (id, shouldThrowError = true) => {
   const isValid = mongoose.Types.ObjectId.isValid(id);
 
-  if (!isValid) {
+  if (!isValid && shouldThrowError) {
     throwError(ErrorKind.noRecordsFound);
   }
 
