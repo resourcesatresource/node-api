@@ -39,11 +39,21 @@ const userSchema = mongoose.Schema({
       timestamp: { type: Date, default: Date.now },
     },
   ],
+  profileImage: {
+    data: {
+      type: Buffer,
+      required: false,
+    },
+    contentType: {
+      type: String,
+      required: false,
+    },
+  },
 });
 
 // adding token generation method
 userSchema.methods.generateAuthToken = function (
-  options = { expiresIn: undefined }
+  options = { expiresIn: undefined },
 ) {
   return jwt.sign(
     {
@@ -55,7 +65,7 @@ userSchema.methods.generateAuthToken = function (
     config.get("jwtprivatekey"),
     {
       ...(options?.expiresIn && { expiresIn: options.expiresIn }),
-    }
+    },
   );
 };
 

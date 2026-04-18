@@ -42,13 +42,41 @@ const getCustomerDetailsHandler = async (req, res) => {
     searchPayload.userId = constructObjectId(id);
   }
 
-  const user = await find(Customer, searchPayload);
+  const user = await find(Customer, searchPayload).populate({
+    path: "userId",
+    select: "profileImage",
+  });
 
   if (isEmpty(user)) {
     throwError(ErrorKind.unableToAccessData);
   }
 
-  return res.json(user).end();
+  const response = user.map((customer) => {
+    const customerObj = customer.toObject();
+    const imageData = customerObj?.userId?.profileImage?.data;
+    const contentType = customerObj?.userId?.profileImage?.contentType;
+    let base64Image = null;
+
+    if (imageData) {
+      if (Buffer.isBuffer(imageData)) {
+        base64Image = imageData.toString("base64");
+      } else if (imageData?.type === "Buffer" && Array.isArray(imageData.data)) {
+        base64Image = Buffer.from(imageData.data).toString("base64");
+      } else if (imageData?.buffer && Buffer.isBuffer(imageData.buffer)) {
+        base64Image = imageData.buffer.toString("base64");
+      }
+    }
+
+    if (customerObj?.userId) {
+      customerObj.userId.profileImage = base64Image
+        ? `data:${contentType};base64,${base64Image}`
+        : null;
+    }
+
+    return customerObj;
+  });
+
+  return res.json(response).end();
 };
 
 const postCustomerHandler = async (req, res) => {

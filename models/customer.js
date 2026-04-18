@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const customerSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Types.ObjectId,
-    ref: "users",
+    ref: "user",
     required: true,
   },
   name: {
@@ -18,6 +18,14 @@ const customerSchema = new mongoose.Schema({
     type: Boolean,
     required: false,
     default: false,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
   },
   connections: [
     {

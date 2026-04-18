@@ -19,6 +19,7 @@ const postUserSchema = Joi.object({
 const patchUserProfileSchema = Joi.object({
   name: Joi.string().regex(TRIM_REGEX).optional(),
   username: Joi.string().regex(TRIM_REGEX).optional(),
+  profileImage: Joi.string().optional(),
 });
 
 const postUserPasswordResetRequestSchema = Joi.object({

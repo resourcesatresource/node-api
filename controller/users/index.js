@@ -36,7 +36,7 @@ const getAdminsHandler = async (req, res) => {
   const admins = await find(User, { isAdmin: true });
 
   const response = (admins ?? []).filter(
-    ({ email }) => email !== superUserEmail
+    ({ email }) => email !== superUserEmail,
   );
 
   return res.json(response);
@@ -82,13 +82,13 @@ const postResetPasswordHandler = async (req, res) => {
 
   const currentPasswordConfirmation = await compareHash(
     currentPassword,
-    storedHashedPassword
+    storedHashedPassword,
   );
 
   if (!currentPasswordConfirmation) {
     throwError(
       ErrorKind.invalidCurrentPassword,
-      ErrorKind.invalidCurrentPassword
+      ErrorKind.invalidCurrentPassword,
     );
   }
 
@@ -99,7 +99,7 @@ const postResetPasswordHandler = async (req, res) => {
   if (isSame) {
     throwError(
       ErrorKind.newPasswordMustNotBeSame,
-      ErrorKind.newPasswordMustNotBeSame
+      ErrorKind.newPasswordMustNotBeSame,
     );
   }
 
@@ -127,7 +127,7 @@ const postAdminRequestHandler = async (req, res) => {
 
   const requested = checkIfAlreadyRequested(
     superUser?.requests ?? [],
-    requesterEmailId
+    requesterEmailId,
   );
 
   if (requested) {
@@ -169,7 +169,7 @@ const postAdminHandler = async (req, res) => {
 
   const requested = checkIfAlreadyRequested(
     adminData?.requests ?? [],
-    requesterEmailId
+    requesterEmailId,
   );
 
   if (!requested) {
@@ -216,7 +216,7 @@ const postAdminRevokeHandler = async (req, res) => {
 const patchUserProfileHandler = async (req, res) => {
   validateInputFields(patchUserProfileSchema, req.body);
 
-  const { name, username } = req.body;
+  const { name, username, profileImage } = req.body;
   const { email } = req.user;
 
   if (username) {
@@ -235,6 +235,16 @@ const patchUserProfileHandler = async (req, res) => {
 
   if (username && username !== user.username) {
     user.username = username;
+  }
+
+  if (profileImage) {
+    const base64Data = req.body.profileImage.replace(
+      /^data:image\/\w+;base64,/,
+      "",
+    );
+    const imgBuffer = Buffer.from(base64Data, "base64");
+    user.profileImage.data = imgBuffer;
+    user.profileImage.contentType = "image/png";
   }
 
   await user.save();
